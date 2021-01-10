@@ -71,3 +71,5 @@ void s_multicast(int s, m_req mreq)
         return;
     }
 }
+
+int capture_beacon
