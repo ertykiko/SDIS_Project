@@ -17,9 +17,8 @@
 
 typedef struct sockaddr_in sa;
 
-int s_udp_f();
-int s_udp_b();
-sa s_addr_f(char *ip, int port);
-sa s_addr_b(char *ip, int port);
+int s_udp();
+sa s_addr(char *ip, int port);
+void s_bind(int s, sa s_addr);
 
 #endif /* socket_h */

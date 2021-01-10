@@ -13,9 +13,9 @@
 
 int main()
 {
-    int socket_f = s_udp_f(); //socket forward 0 
-    int socket_b = s_udp_b(); //socket backward 1
+    int socket_f = s_udp(); //socket forward 0 
+    int socket_b = s_udp(); //socket backward 1
 
-    sa sad_loc_f = s_addr_f(ip0,PORT0); //0
-    sa sad_loc_b = s_addr_f(ip1,PORT1); //1
+    sa sad_loc_f = s_addr(ip0,PORT0); //0
+    sa sad_loc_b = s_addr(ip1,PORT1); //1
 }

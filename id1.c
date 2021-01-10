@@ -13,10 +13,10 @@
 
 main()
 {
-    int socket_f = s_udp_f(); //socket forward 2 
-    int socket_b = s_udp_b(); //socket backward 0
+    int socket_f = s_udp(); //socket forward 2 
+    int socket_b = s_udp(); //socket backward 0
 
-    sa sad_loc_f = s_addr_f(ip2,PORT2); //2
-    sa sad_loc_b = s_addr_f(ip0,PORT0); //0
+    sa sad_loc_f = s_addr(ip2,PORT2); //2
+    sa sad_loc_b = s_addr(ip0,PORT0); //0
     
 }

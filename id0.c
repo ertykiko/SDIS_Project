@@ -14,11 +14,11 @@
 
 int main()
 {
-    int socket_f = s_udp_f(); //socket forward 1 
-    int socket_b = s_udp_b(); //socket backward 2
+    int socket_f = s_udp(); //socket forward 1 
+    int socket_b = s_udp(); //socket backward 2
 
-    sa sad_loc_f = s_addr_f(ip1,PORT1); //1
-    sa sad_loc_b = s_addr_f(ip2,PORT2); //2
+    sa sad_loc_f = s_addr(ip1,PORT1); //1
+    sa sad_loc_b = s_addr(ip2,PORT2); //2
     /*
     sad_loc_f.sin_family = AF_INET;
     sad_loc_f.sin_port = htons(PORT1);
