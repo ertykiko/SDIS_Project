@@ -14,32 +14,27 @@
 
 int main()
 {
-    int socket_f = socket(PF_INET, SOCK_DGRAM,0); //socket forward 1 
-    int socket_b = socket(PF_INET, SOCK_DGRAM,0); //socket backward 2
+    int socket_f = s_udp_f(); //socket forward 1 
+    int socket_b = s_udp_b(); //socket backward 2
 
-    if ( (socket_f<0) || (socket_b<0))
-    {
-        printf("\n Socket creation error \n");
-        //return -1;
-    }
-    
-    sa sad_loc_f; //1
-    sa sad_loc_b; //2
-
+    sa sad_loc_f = s_addr_f(ip1,PORT1); //1
+    sa sad_loc_b = s_addr_f(ip2,PORT2); //2
+    /*
     sad_loc_f.sin_family = AF_INET;
     sad_loc_f.sin_port = htons(PORT1);
     sad_loc_f.sin_addr.s_addr = htonl(INADDR_LOOPBACK); //INADDR_LOOPBACK: ip que desgina o computador local, usando o loopback device: as mensagens não circulam na rede 
-
+    
     sad_loc_b.sin_family = AF_INET;
     sad_loc_b.sin_port = htons(PORT2);
     sad_loc_b.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     
+
     if ( (inet_aton(ip1, &sad_loc_f.sin_addr)==0) || (inet_aton(ip2, &sad_loc_b.sin_addr)==0) )
     {
         printf("\nInvalid address/ Address not supported \n");
         //return -1;
     }
-    
+    */
 
 
 }
