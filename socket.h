@@ -14,14 +14,23 @@
 #include <string.h> 
 #include <arpa/inet.h>	//inet_addr
 #include <stdlib.h>
+#include <sys/time.h>
 
+typedef int sockfd;
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
 
-int s_udp();
-sa s_addr(char *ip, int port);
-void s_bind(int s, sa s_addr);
-void s_reuse(int s);
-void s_inet(int s, char *ip, m_req mreq);
-void s_multicast(int s, m_req mreq);
+struct UDP
+{
+    int packet_id;
+    long send_time_sec;
+    long send_time_usec;
+    long sleep_time;
+};
+
+int s_udp_f();
+int s_udp_b();
+sa s_addr_f(char *ip, int port);
+sa s_addr_b(char *ip, int port);
+void error(char *s);
 #endif /* socket_h */

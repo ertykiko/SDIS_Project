@@ -62,12 +62,8 @@ void s_inet(int s, char *ip, m_req mreq)
     
 }
 
-void s_multicast(int s, m_req mreq)
+void error(char *s)
 {
-    int set = setsockopt(s,IPPROTO_IP,IP_ADD_MEMBERSHIP,&mreq,sizeof(mreq));
-    if (set!=0)
-    {
-        printf("\nJoin Multicast failed\n");
-        return;
-    }
+    perror(s);
+    exit(1);
 }
