@@ -1,14 +1,8 @@
-#include <stdio.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h> 
-#include <unistd.h> 
-#include <string.h> 
-
 #include "socket.h"
 
-#define PORT0 0
+#define PORT0 8080
 #define ip0 "127.0.0.1"
-#define PORT2 2
+#define PORT2 8080
 #define ip2 "127.0.0.1"
 
 int main()
