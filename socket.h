@@ -16,9 +16,12 @@
 #include <stdlib.h>
 
 typedef struct sockaddr_in sa;
+typedef struct ip_mreq m_req;
 
 int s_udp();
 sa s_addr(char *ip, int port);
 void s_bind(int s, sa s_addr);
-
+void s_reuse(int s);
+void s_inet(int s, char *ip, m_req mreq);
+void s_multicast(int s, m_req mreq);
 #endif /* socket_h */
