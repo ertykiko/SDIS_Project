@@ -1,5 +1,5 @@
 #include "socket.h"
-#include "beacon.c"
+
 
 int timer(int t) //return 1 when t ms
 {
@@ -113,15 +113,14 @@ void s_multicast(int s, m_req mreq)
         return;
     }
 }
-
-int my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
+void my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
     /* Do something with the packet here. 
        The print_packet_info() function shows in the
        previous example could be used here. */
 
     //print_packet_info(packet, *header);
-    return 1;
+    
 }
 int capture_beacon(char * dev,int timeout,bool debugg )
 {
@@ -213,11 +212,10 @@ int capture_beacon(char * dev,int timeout,bool debugg )
     /* now we can set our callback function */
 
     pcap_loop(handle, num_packets, my_packet_handler, NULL);
-
+    return 1;
     /* cleanup */
     pcap_freecode(&fp);
     pcap_close(handle);
     if(debugg==true)
     printf("\nCapture complete.\n");
-}
 

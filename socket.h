@@ -39,5 +39,5 @@ void s_bind(int s, sa s_addr);
 void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);
 void s_multicast(int s, m_req mreq);
-int capture_beacon();
+int capture_beacon(char *dev, int timeout, bool debugg);
 #endif /* socket_h */
