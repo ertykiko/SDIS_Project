@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <pcap.h>
+#include <stdbool.h>
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
