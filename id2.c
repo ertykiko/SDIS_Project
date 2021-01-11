@@ -58,6 +58,12 @@ void *receive_th(char *ip, int port, char *frame)
 
 int main()
 {
+    //Downlink 
+    //receive beacon
+
+    //Uplink
+    //id2 -> start transmitting 50 + 16.6 + 16.6 ms 
+    
     int socket_f = s_udp(); //socket forward 0 
     int socket_b = s_udp(); //socket backward 1
 

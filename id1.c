@@ -7,6 +7,13 @@
 
 int main()
 {
+    //Downlink 
+    //receive beacon
+
+    //Uplink
+    //id1 -> start transmitting 50 + 16,6 ms 
+    
+
     int socket_f = s_udp(); //socket forward 2 
     int socket_b = s_udp(); //socket backward 0
 
