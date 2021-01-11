@@ -1,14 +1,4 @@
-#include <pcap.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/time.h>
+#include "socket.h"
 
 
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
@@ -46,6 +36,7 @@ int main()
     struct bpf_program fp;
     int num_packets=10;
     int timeout = 10000;
+    clock_t timer1;
 
   
     /* Get IP and Subnet-mask associated with capture device */
@@ -79,7 +70,7 @@ int main()
         printf("Error create\n");
     }
     // Set device to monitor mode
-    
+
     if (pcap_set_rfmon(handle, 1) != 0)
     {
         printf("Error while setting %s to monitor mode \n", dev);
@@ -124,6 +115,7 @@ int main()
     }
     
     /* now we can set our callback function */
+    
     pcap_loop(handle, num_packets, my_packet_handler, NULL);
 
     /* cleanup */

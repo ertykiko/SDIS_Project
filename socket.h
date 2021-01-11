@@ -17,6 +17,7 @@
 #include <pthread.h>
 #include <pcap.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define MAXLINE 1024
 
