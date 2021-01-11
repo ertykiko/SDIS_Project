@@ -113,6 +113,7 @@ void s_multicast(int s, m_req mreq)
         return;
     }
 }
+
 int my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
     /* Do something with the packet here. 
@@ -122,7 +123,8 @@ int my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_ch
     //print_packet_info(packet, *header);
     return 1;
 }
-int capture_beacon(char * dev,int timeout,bool debugg ){
+int capture_beacon(char * dev,int timeout,bool debugg )
+{
     pcap_t *handle;
     char error_buff[PCAP_ERRBUF_SIZE];
     char filter[] = "wlan type mgt subtype beacon";
@@ -219,4 +221,3 @@ int capture_beacon(char * dev,int timeout,bool debugg ){
     printf("\nCapture complete.\n");
 }
 
-}

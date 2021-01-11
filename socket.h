@@ -20,6 +20,12 @@
 #include <stdbool.h>
 
 #define MAXLINE 1024
+#define PORT0 8080
+#define PORT1 8080
+#define PORT2 8080
+#define ip0 "127.0.0.1"
+#define ip1 "127.0.0.1"
+#define ip2 "127.0.0.1"
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;

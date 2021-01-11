@@ -1,10 +1,5 @@
 #include "socket.h"
 
-#define PORT1 8080
-#define ip1 "127.0.0.1"
-#define PORT2 8080
-#define ip2 "127.0.0.1"
-
 void cli_th(int port, char *frame)
 {
     int sockfd;
