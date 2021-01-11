@@ -15,10 +15,12 @@
 #include <arpa/inet.h>	//inet_addr
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
 
+long timediff(clock_t t1, clock_t t2);
 int s_udp();
 sa s_addr(char *ip, int port);
 void s_bind(int s, sa s_addr);
