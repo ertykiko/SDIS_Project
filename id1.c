@@ -1,6 +1,6 @@
 #include "socket.h"
 
-void cli_th(int port, char *frame)
+int cli_th(int port, char *frame)
 {
     int sockfd;
     char buffer[MAXLINE];
@@ -26,9 +26,11 @@ void cli_th(int port, char *frame)
     printf("Server : %s\n", buffer);
 
     close(sockfd);
+    
+    return 0;
 }
 
-void serv_th(char *ip, int port, char *frame)
+int serv_th(char *ip, int port, char *frame)
 {
     int sockfd;
     char buffer[MAXLINE];
@@ -47,7 +49,7 @@ void serv_th(char *ip, int port, char *frame)
     servaddr = s_addr(port);
 
     // Bind the socket with the server address
-   s_bind(sockfd,servaddr);
+    s_bind(sockfd,servaddr);
 
     int len, n;
 
@@ -58,6 +60,8 @@ void serv_th(char *ip, int port, char *frame)
     printf("Client : %s\n", buffer);
     sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &cliaddr,len);
     printf("Hello message sent.\n");
+
+    return 0;
 }
 
 int main()
