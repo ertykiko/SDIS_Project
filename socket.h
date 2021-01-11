@@ -14,7 +14,7 @@
 #include <string.h> 
 #include <arpa/inet.h>	//inet_addr
 #include <stdlib.h>
-#include <pcap.h>
+#include <pthread.h>
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;

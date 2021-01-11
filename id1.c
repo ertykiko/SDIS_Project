@@ -1,18 +1,19 @@
-#include <stdio.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h> 
-#include <unistd.h> 
-#include <string.h> 
-
 #include "socket.h"
 
-#define PORT0 0
+#define PORT0 8080
 #define ip0 "127.0.0.1"
-#define PORT2 2
+#define PORT2 8080
 #define ip2 "127.0.0.1"
 
 int main()
 {
+    //Downlink 
+    //receive beacon
+
+    //Uplink
+    //id1 -> start transmitting 50 + 16,6 ms 
+    
+
     int socket_f = s_udp(); //socket forward 2 
     int socket_b = s_udp(); //socket backward 0
 
