@@ -16,11 +16,13 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <pcap.h>
+#include <time.h>
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
 
-long timediff(clock_t t1, clock_t t2);
+int timer(int t);
+void RTD(int t_send, int t_recv);
 int s_udp();
 sa s_addr(char *ip, int port);
 void s_bind(int s, sa s_addr);
