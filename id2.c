@@ -58,6 +58,37 @@ void *receive_th(char *ip, int port, char *frame)
 
 int main()
 {
+    int state_id2 = 0; //Waiting for beacon to sync
+    int aux_beacon, aux_50ms, offset, aux_16ms;
+    
+    
+    while (1)
+    {
+        if ( state_id2 == 0 && aux_beacon == 1 ) //sync, and start downlink
+        {
+            state_id2 = 1; //1->start downlink, receive
+            aux_50ms = timer(50);
+            /*code*/
+        }
+        else if ( state_id2 == 1 && aux_50ms == 1 ) //Downlink over
+        {
+            state_id2 = 2; //2->wait for slot to transmit
+            aux_50ms = 0;
+            offset = timer(16+16);
+        }
+        else if ( state_id2 == 2 && offset == 1 ) //Uplink time to send socket
+        {
+            state_id2 = 3; //3->sending
+            offset = 0;
+            aux_16ms = timer(16);
+            /*code*/
+        }
+        else if ( state_id2 == 3 && aux_16ms == 1 ) 
+        {
+            state_id2 = 0; //Finished transmiting and waiting for beacon to sync 
+            aux_16ms = 0;  
+        }
+    }
     //Downlink 
     //receive beacon
 

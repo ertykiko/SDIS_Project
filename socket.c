@@ -1,6 +1,6 @@
 #include "socket.h"
 
-int timer(int t) 
+int timer(int t) //return 1 when t ms
 {
     clock_t t1, t2;
     t1 = clock();
@@ -18,9 +18,10 @@ int timer(int t)
         if (diff >= t)
         {
           //printf("%f\n",diff);
-          return 0;
+          return 1;
         }
     }
+    return 0;
 }
 
 void RTD(int t_send, int t_recv)
@@ -32,7 +33,6 @@ void RTD(int t_send, int t_recv)
     fptr = fopen("tempo.txt", "a");
     fprintf(fptr, "%d\n", rtd);
     fclose(fptr);
-    return 0;
 }
 
 int s_udp()
@@ -106,4 +106,4 @@ void s_multicast(int s, m_req mreq)
     }
 }
 
-int capture_beacon
+int capture_beacon();
