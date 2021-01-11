@@ -1,10 +1,39 @@
 #include "socket.h"
 #include "beacon.c"
 
-long timediff(clock_t t1, clock_t t2) {
-    long elapsed;
-    elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
-    return elapsed;
+int timer(int t) //return 1 when t ms
+{
+    clock_t t1, t2;
+    t1 = clock();
+    int i;
+    float diff;
+
+    for(i = 0; i < 100000000; i++)
+    {
+        int x = 90;
+
+        t2 = clock();
+
+        diff = ((float)(t2 - t1) / 1000000.0F ) * 1000;
+
+        if (diff >= t)
+        {
+          //printf("%f\n",diff);
+          return 1;
+        }
+    }
+    return 0;
+}
+
+void RTD(int t_send, int t_recv)
+{
+    FILE *fptr;
+
+    int rtd = ((float)(t_recv - t_send) / 1000000.0F ) * 1000;
+
+    fptr = fopen("tempo.txt", "a");
+    fprintf(fptr, "%d\n", rtd);
+    fclose(fptr);
 }
 
 int s_udp()

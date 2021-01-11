@@ -7,12 +7,44 @@
 
 int main()
 {
-    //Downlink 
-    //receive beacon
+    int state_id0 = 0; //Waiting for beacon to sync
+    int aux_beacon, aux_50ms, offset, aux_16ms;
     
-    //Uplink
-    //id0 -> start transmitting 50ms 
-
+    
+    while (1)
+    {
+        if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
+        {
+            state_id0 = 1; //1->start downlink, receive
+            aux_50ms = timer(50);
+            /*code*/
+        }
+        else if ( state_id0 == 1 && aux_50ms == 1 ) //Downlink over
+        {
+            state_id0 = 2; //2->wait for slot to transmit
+            aux_50ms = 0;
+            //offset = timer(0);
+            offset = 1;
+        }
+        else if ( state_id0 == 2 && offset == 1 ) //Uplink time to send socket
+        {
+            state_id0 = 3; //3->sending
+            offset = 0;
+            aux_16ms = timer(16);
+            /*code*/
+        }
+        else if ( state_id0 == 3 && aux_16ms == 1 ) 
+        {
+            state_id0 = 0; //Finished transmiting and waiting for beacon to sync 
+            aux_16ms = 0;  
+        }
+    }
+    
+    
+    
+    
+    
+    
     int socket_f = s_udp(); //socket forward 1 
     int socket_b = s_udp(); //socket backward 2
 
