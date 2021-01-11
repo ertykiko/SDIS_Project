@@ -5,55 +5,64 @@
 #define PORT0 8080
 #define ip0 "127.0.0.1"
 
-void *send_th(char *ip, int port, char *frame)
+void cli_th(int port, char *frame)
 {
-    int s = s_udp();
-    sa dest;
+    int sockfd;
+    char buffer[MAXLINE];
+    frame = "Hello from client";
+    struct sockaddr_in     servaddr;
 
-    int rcv, len;
-    char buffer[1024];
-
+    // Creating socket file descriptor
+    sockfd = s_udp();
+    
     //erases the data in the bytes of the memory
-    bzero(&dest,sizeof(dest));
+    bzero(&servaddr,sizeof(servaddr));
 
-    //Filling destination (receiver) information
-    dest = s_addr(ip1,PORT0);
+    // Filling server information
+    servaddr = s_addr(port);
 
-    sendto(s, (const char*)frame, strlen(frame), 0, (const struct sockaddr*)&dest, sizeof(dest));
+    int n, len;
 
-    rcv = recvfrom(s,(char *)buffer, 1024, MSG_WAITALL, (struct sockaddr *)&dest, (socklen_t*)&len);
-    //buffer[rcv] = '\0';
-    //printf("message received: %s\n", buffer);
-    close(s);
+    sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &servaddr,sizeof(servaddr));
+    printf("Hello message sent.\n");
+
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *) &servaddr,(socklen_t*)&len);
+    buffer[n] = '\0';
+    printf("Server : %s\n", buffer);
+
+    close(sockfd);
 }
 
-void *receive_th(char *ip, int port, char *frame)
+void serv_th(char *ip, int port, char *frame)
 {
-    int s = s_udp();
-    sa org, dest;
+    int sockfd;
+    char buffer[MAXLINE];
+    frame = "Hello from server";
+    struct sockaddr_in servaddr, cliaddr;
 
-    char buffer[1024];
-    int len, n;
+    // Creating socket file descriptor
+    sockfd = s_udp();
 
     //erases the data in the bytes of the memory
-    bzero(&org, sizeof(org));
-    bzero(&dest, sizeof(dest));
-    
-    //Filling origin (receiver) information
-    org = s_addr(ip,port);
+    bzero(&servaddr,sizeof(servaddr));
+    bzero(&cliaddr,sizeof(cliaddr));
 
-    //Bind the socket with the origin (receiver) address
-    s_bind(s,org);
 
-    //dest
-    len = sizeof(dest);
+    // Filling server information
+    servaddr = s_addr(port);
 
-    n = recvfrom(s, (char*)buffer, 1024, MSG_WAITALL, (struct sockaddr*)&dest,(socklen_t*)&len);
-    //buffer[n] = '\0';
-    printf("message received: %s\n", buffer);
+    // Bind the socket with the server address
+   s_bind(sockfd,servaddr);
 
-    sendto(s, (const char*)frame, strlen(frame),0,(struct sockaddr*)&dest, len);
+    int len, n;
 
+    len = sizeof(cliaddr);  //len is value/resuslt
+
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, ( struct sockaddr *) &cliaddr,(socklen_t*)&len);
+    buffer[n] = '\0';
+    printf("Client : %s\n", buffer);
+    sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &cliaddr,len);
+    printf("Hello message sent.\n");
 }
 
 int main()
@@ -64,7 +73,11 @@ int main()
     
     while (1)
     {
-        if ( state_id2 == 0 && aux_beacon == 1 ) //sync, and start downlink
+        if ( state_id2 == 0 )
+        {
+            aux_beacon = capture_beacon();
+        }
+        else if ( state_id2 == 0 && aux_beacon == 1 ) //sync, and start downlink
         {
             state_id2 = 1; //1->start downlink, receive
             aux_50ms = timer(50);
@@ -98,6 +111,6 @@ int main()
     int socket_f = s_udp(); //socket forward 0 
     int socket_b = s_udp(); //socket backward 1
 
-    sa sad_loc_f = s_addr(ip0,PORT0); //0
-    sa sad_loc_b = s_addr(ip1,PORT1); //1
+    sa sad_loc_f = s_addr(PORT0); //0
+    sa sad_loc_b = s_addr(PORT1); //1
 }

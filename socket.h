@@ -18,13 +18,16 @@
 #include <pcap.h>
 #include <time.h>
 
+#define MAXLINE 1024
+
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
 
 int timer(int t);
 void RTD(int t_send, int t_recv);
 int s_udp();
-sa s_addr(char *ip, int port);
+sa s_addr(int port);
+sa s_ip_addr(char *ip, int port);
 void s_bind(int s, sa s_addr);
 void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);

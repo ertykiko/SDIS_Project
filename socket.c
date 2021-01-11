@@ -28,10 +28,10 @@ void RTD(int t_send, int t_recv)
 {
     FILE *fptr;
 
-    int rtd = ((float)(t_recv - t_send) / 1000000.0F ) * 1000;
+    float rtd = ((float)(t_recv - t_send) / 1000000.0F ) * 1000;
 
     fptr = fopen("tempo.txt", "a");
-    fprintf(fptr, "%d\n", rtd);
+    fprintf(fptr, "%f\n", rtd);
     fclose(fptr);
 }
 
@@ -46,7 +46,7 @@ int s_udp()
     return s;
 }
 
-sa s_addr(char *ip, int port)
+sa s_addr(int port)
 {
     sa s;
 
@@ -54,13 +54,20 @@ sa s_addr(char *ip, int port)
     s.sin_port = htons(port);
     s.sin_addr.s_addr = htonl(INADDR_LOOPBACK); //INADDR_LOOPBACK: ip que desgina o computador local, usando o loopback device: as mensagens não circulam na rede 
 
-    /*
+    return s;
+}
+
+sa s_ip_addr(char *ip, int port)
+{
+    sa s;
+
+    s.sin_family = AF_INET;
+    s.sin_port = htons(port);
     if ((inet_aton(ip, &s.sin_addr)==0))
     {
         printf("\nInvalid address/ Address not supported\n");
         exit(0);
     }
-    */
     return s;
 }
 

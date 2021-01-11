@@ -5,6 +5,66 @@
 #define PORT2 8080
 #define ip2 "127.0.0.1"
 
+void cli_th(int port, char *frame)
+{
+    int sockfd;
+    char buffer[MAXLINE];
+    frame = "Hello from client";
+    struct sockaddr_in     servaddr;
+
+    // Creating socket file descriptor
+    sockfd = s_udp();
+    
+    //erases the data in the bytes of the memory
+    bzero(&servaddr,sizeof(servaddr));
+
+    // Filling server information
+    servaddr = s_addr(port);
+
+    int n, len;
+
+    sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &servaddr,sizeof(servaddr));
+    printf("Hello message sent.\n");
+
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *) &servaddr,(socklen_t*)&len);
+    buffer[n] = '\0';
+    printf("Server : %s\n", buffer);
+
+    close(sockfd);
+}
+
+void serv_th(char *ip, int port, char *frame)
+{
+    int sockfd;
+    char buffer[MAXLINE];
+    frame = "Hello from server";
+    struct sockaddr_in servaddr, cliaddr;
+
+    // Creating socket file descriptor
+    sockfd = s_udp();
+
+    //erases the data in the bytes of the memory
+    bzero(&servaddr,sizeof(servaddr));
+    bzero(&cliaddr,sizeof(cliaddr));
+
+
+    // Filling server information
+    servaddr = s_addr(port);
+
+    // Bind the socket with the server address
+   s_bind(sockfd,servaddr);
+
+    int len, n;
+
+    len = sizeof(cliaddr);  //len is value/resuslt
+
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, ( struct sockaddr *) &cliaddr,(socklen_t*)&len);
+    buffer[n] = '\0';
+    printf("Client : %s\n", buffer);
+    sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &cliaddr,len);
+    printf("Hello message sent.\n");
+}
+
 int main()
 {
     int state_id1 = 0; //Waiting for beacon to sync
@@ -13,7 +73,11 @@ int main()
     
     while (1)
     {
-        if ( state_id1 == 0 && aux_beacon == 1 ) //sync, and start downlink
+        if ( state_id1 == 0 )
+        {
+            aux_beacon = capture_beacon();
+        }
+        else if ( state_id1 == 0 && aux_beacon == 1 ) //sync, and start downlink
         {
             state_id1 = 1; //1->start downlink, receive
             aux_50ms = timer(50);
@@ -61,8 +125,8 @@ int main()
     bzero(&sad_loc_f,sizeof(sad_loc_b));
 
     //addr
-    sad_loc_f = s_addr(ip2,PORT2); //2
-    sad_loc_b = s_addr(ip0,PORT0); //0
+    sad_loc_f = s_addr(PORT2); //2
+    sad_loc_b = s_addr(PORT0); //0
 
     //bind
     s_bind(socket_f,sad_loc_f);
