@@ -211,7 +211,7 @@ int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *er
     }
     else
     {
-        printf("Sucess\n");
+        //printf("Sucess\n");
         return 1;
     }
 

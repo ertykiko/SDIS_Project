@@ -2,6 +2,8 @@
 #define socket_h
 
 
+
+
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
@@ -19,6 +21,7 @@
 #include <time.h>
 #include <stdbool.h>
 
+#define device "en1"
 #define MAXLINE 1024
 #define PORT 8080
 #define PORT0 8080
@@ -41,12 +44,7 @@ void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);
 void s_multicast(int s, m_req mreq);
 int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *err_buf);
-//***PCAP_Variables***//
-/*pcap_t *handler;
-char err_buf[PCAP_ERRBUF_SIZE];
-struct pcap_pkthdr packet_header;
-const u_char *packet;*/
-//********************//
+
 
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
 
