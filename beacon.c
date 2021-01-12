@@ -28,7 +28,7 @@ int main()
     pcap_t *handle;
     char error_buff[PCAP_ERRBUF_SIZE];
     char filter[]="wlan type mgt subtype beacon";
-    char *dev = "en1";
+    char *dev = "en0";
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
@@ -63,6 +63,7 @@ int main()
     //handle = pcap_open_live(dev, BUFSIZ, 1, 1000, error_buff);
 
     //create handle
+    
     handle = pcap_create(dev, error_buff);
     if (handle == NULL)
     {

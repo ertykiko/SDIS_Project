@@ -20,6 +20,7 @@
 #include <stdbool.h>
 
 #define MAXLINE 1024
+#define PORT 8080
 #define PORT0 8080
 #define PORT1 8080
 #define PORT2 8080

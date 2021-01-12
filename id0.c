@@ -1,40 +1,10 @@
 #include "socket.h"
 
-int cli_th(int port, char *frame)
+void* serv(void* arg)
 {
     int sockfd;
     char buffer[MAXLINE];
-    frame = "Hello from client";
-    struct sockaddr_in     servaddr;
-
-    // Creating socket file descriptor
-    sockfd = s_udp();
-    
-    //erases the data in the bytes of the memory
-    bzero(&servaddr,sizeof(servaddr));
-
-    // Filling server information
-    servaddr = s_addr(port);
-
-    int n, len;
-
-    sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &servaddr,sizeof(servaddr));
-    printf("Hello message sent.\n");
-
-    n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *) &servaddr,(socklen_t*)&len);
-    buffer[n] = '\0';
-    printf("Server : %s\n", buffer);
-
-    close(sockfd);
-
-    return 0;
-}
-
-int serv_th(char *ip, int port, char *frame)
-{
-    int sockfd;
-    char buffer[MAXLINE];
-    frame = "Hello from server";
+    char *frame = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
 
     // Creating socket file descriptor
@@ -44,9 +14,8 @@ int serv_th(char *ip, int port, char *frame)
     bzero(&servaddr,sizeof(servaddr));
     bzero(&cliaddr,sizeof(cliaddr));
 
-
     // Filling server information
-    servaddr = s_addr(port);
+    servaddr = s_addr(PORT);
 
     // Bind the socket with the server address
     s_bind(sockfd,servaddr);
@@ -61,8 +30,40 @@ int serv_th(char *ip, int port, char *frame)
     sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &cliaddr,len);
     printf("Hello message sent.\n");
 
-    return 0;
+    pthread_exit(NULL);
 }
+
+void* cli(void* arg)
+{
+    int sockfd;
+    char buffer[MAXLINE];
+    char *frame = "Hello from client";
+    struct sockaddr_in servaddr;
+
+    // Creating socket file descriptor
+    sockfd = s_udp();
+    
+    //erases the data in the bytes of the memory
+    bzero(&servaddr,sizeof(servaddr));
+
+    // Filling server information
+    servaddr = s_addr(PORT);
+
+    int n, len;
+
+    sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &servaddr,sizeof(servaddr));
+    printf("Hello message sent.\n");
+
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *) &servaddr,(socklen_t*)&len);
+    buffer[n] = '\0';
+    printf("Server : %s\n", buffer);
+
+    close(sockfd);
+
+    pthread_exit(NULL);
+}
+
+
 
 int main()
 {
@@ -74,7 +75,7 @@ int main()
     {
         if ( state_id0 == 0 )
         {
-            aux_beacon = capture_beacon();
+            //aux_beacon = capture_beacon();
         }
         else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
         {
