@@ -83,7 +83,7 @@ void* cli(void* arg)
 //         if ( state_id0 == 0 && aux_beacon == 0)
 //         {
 //             printf("State 1\n");
-//             aux_beacon = pcap(device, handler, &packet_header, err_buf);
+//             //aux_beacon = pcap(device, handler, &packet_header, err_buf);
 //             printf("Aux beacon %d \n",aux_beacon);
 //         }
 //         else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
@@ -118,48 +118,19 @@ void* cli(void* arg)
             
 //         }
 //     }
-    
-    
-    
-    
-    
-    
-//     int socket_f = s_udp(); //socket forward 1 
-//     int socket_b = s_udp(); //socket backward 2
-
-//     sa sad_loc_f = s_addr(PORT); //1
-//     sa sad_loc_b = s_addr(PORT); //2
-//     /*
-//     sad_loc_f.sin_family = AF_INET;
-//     sad_loc_f.sin_port = htons(PORT1);
-//     sad_loc_f.sin_addr.s_addr = htonl(INADDR_LOOPBACK); //INADDR_LOOPBACK: ip que desgina o computador local, usando o loopback device: as mensagens não circulam na rede 
-    
-//     sad_loc_b.sin_family = AF_INET;
-//     sad_loc_b.sin_port = htons(PORT2);
-//     sad_loc_b.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    
-
-//     if ( (inet_aton(ip1, &sad_loc_f.sin_addr)==0) || (inet_aton(ip2, &sad_loc_b.sin_addr)==0) )
-//     {
-//         printf("\nInvalid address/ Address not supported \n");
-//         //return -1;
-//     }
-//     */
-
-
 // }
 
 //teste main
-int main()
-{
-    pthread_t pt_s;
-    pthread_t pt_c;
+// int main()
+// {
+//     pthread_t pt_s;
+//     pthread_t pt_c;
 
-    pthread_create(&pt_s,NULL,serv,NULL);
-    pthread_join(pt_s,NULL);
+//     pthread_create(&pt_s,NULL,serv,NULL);
+//     pthread_join(pt_s,NULL);
 
-    pthread_create(&pt_c,NULL,cli,NULL);
-    pthread_join(pt_c,NULL);
+//     pthread_create(&pt_c,NULL,cli,NULL);
+//     pthread_join(pt_c,NULL);
     
-    return 0;
-}
+//     return 0;
+// }

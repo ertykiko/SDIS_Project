@@ -40,6 +40,8 @@ void* cli(void* arg)
     char *frame = "Hello from client";
     struct sockaddr_in servaddr;
 
+    time_data *t_data = (time_data *)arg; 
+    
     // Creating socket file descriptor
     sockfd = s_udp();
     
@@ -53,10 +55,12 @@ void* cli(void* arg)
 
     sendto(sockfd, (const char *)frame, strlen(frame),0, (const struct sockaddr *) &servaddr,sizeof(servaddr));
     printf("Hello message sent.\n");
+    t_data->t_send = clock();
 
     n = recvfrom(sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *) &servaddr,(socklen_t*)&len);
     buffer[n] = '\0';
     printf("Server : %s\n", buffer);
+    t_data->t_recv = clock();
 
     close(sockfd);
 
@@ -142,12 +146,15 @@ int main()
 {
     pthread_t pt_s;
     pthread_t pt_c;
-
+    //clock_t t_send, t_recv;
+    time_data t_data;
     // pthread_create(&pt_c,NULL,cli,NULL);
-    // pthread_join(pt_c,NULL);
-
-    pthread_create(&pt_s,NULL,serv,NULL);
-    pthread_join(pt_s,NULL);
+    pthread_create(&pt_c,NULL,cli,(void *)&t_data);
+    pthread_join(pt_c,NULL);
+    //printf("t_send:%lu t_recv:%lu\n",t_data.t_send,t_data.t_recv);
+    RTD(t_data.t_send,t_data.t_recv);
+    // pthread_create(&pt_s,NULL,serv,NULL);
+    // pthread_join(pt_s,NULL);
     
     return 0;
 }

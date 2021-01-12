@@ -25,12 +25,11 @@ int timer(int t) //return 1 when t ms
     return 0;
 }
 
-void RTD(int t_send, int t_recv)
+void RTD(clock_t t_send, clock_t t_recv)
 {
-    FILE *fptr;
-
     float rtd = ((float)(t_recv - t_send) / 1000000.0F ) * 1000;
 
+    FILE *fptr;
     fptr = fopen("tempo.txt", "a");
     fprintf(fptr, "%f\n", rtd);
     fclose(fptr);

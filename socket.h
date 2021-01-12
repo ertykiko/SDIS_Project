@@ -30,9 +30,13 @@
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
+typedef struct time_data{
+    clock_t t_send;
+    clock_t t_recv;
+} time_data;
 
 int timer(int t);
-void RTD(int t_send, int t_recv);
+void RTD(clock_t t_send, clock_t t_recv);
 int s_udp();
 sa s_addr(int port);
 sa s_ip_addr(char *ip, int port);
