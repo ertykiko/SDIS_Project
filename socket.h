@@ -39,5 +39,14 @@ void s_bind(int s, sa s_addr);
 void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);
 void s_multicast(int s, m_req mreq);
-int capture_beacon(char *dev, int timeout, bool debugg);
+int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *err_buf);
+//***PCAP_Variables***//
+/*pcap_t *handler;
+char err_buf[PCAP_ERRBUF_SIZE];
+struct pcap_pkthdr packet_header;
+const u_char *packet;*/
+//********************//
+
+void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
+
 #endif /* socket_h */

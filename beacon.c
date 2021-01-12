@@ -128,8 +128,8 @@ int main()
 
     //rtd = ((float)(t1- t_send) / 1000000.0F) * 1000
 
-          /* cleanup */
-          pcap_freecode(&fp);
+    /* cleanup */
+    pcap_freecode(&fp);
     pcap_close(handle);
 
     printf("\nCapture complete.\n");
