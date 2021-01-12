@@ -48,7 +48,7 @@ void* cli(void* arg)
     bzero(&servaddr,sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_addr(PORT);
+    servaddr = s_ip_addr(ip1,PORT);
 
     int n, len;
 
@@ -66,85 +66,100 @@ void* cli(void* arg)
 
 
 
+// int main()
+// {
+//     int state_id0 = 0; //Waiting for beacon to sync
+//     int aux_beacon=0, aux_50ms, offset, aux_16ms;
+    
+//     //***PCAP_Variables***//
+//     pcap_t *handler;
+//     char err_buf[PCAP_ERRBUF_SIZE];
+//     struct pcap_pkthdr packet_header;
+//     const u_char *packet;
+//     //********************//
+
+//         while (1)
+//     {
+//         if ( state_id0 == 0 && aux_beacon == 0)
+//         {
+//             printf("State 1\n");
+//             aux_beacon = pcap(device, handler, &packet_header, err_buf);
+//             printf("Aux beacon %d \n",aux_beacon);
+//         }
+//         else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
+//         {
+//             printf("State 2\n");
+//             state_id0 = 1; //1->start downlink, receive
+//             aux_beacon = 0;
+//             aux_50ms = timer(50);
+//             /*code*/
+//         }
+//         else if ( state_id0 == 1 && aux_50ms == 1 ) //Downlink over
+//         {
+//             printf("State 3\n");
+//             state_id0 = 2; //2->wait for slot to transmit
+//             aux_50ms = 0;
+//             //offset = timer(0);
+//             offset = 1;
+//         }
+//         else if ( state_id0 == 2 && offset == 1 ) //Uplink time to send socket
+//         {
+//             printf("State 4\n");
+//             state_id0 = 3; //3->sending
+//             offset = 0;
+//             aux_16ms = timer(16);
+//             /*code*/
+//         }
+//         else if ( state_id0 == 3 && aux_16ms == 1 ) 
+//         {
+//             printf("State 5\n");
+//             state_id0 = 0; //Finished transmiting and waiting for beacon to sync 
+//             aux_16ms = 0;  
+            
+//         }
+//     }
+    
+    
+    
+    
+    
+    
+//     int socket_f = s_udp(); //socket forward 1 
+//     int socket_b = s_udp(); //socket backward 2
+
+//     sa sad_loc_f = s_addr(PORT); //1
+//     sa sad_loc_b = s_addr(PORT); //2
+//     /*
+//     sad_loc_f.sin_family = AF_INET;
+//     sad_loc_f.sin_port = htons(PORT1);
+//     sad_loc_f.sin_addr.s_addr = htonl(INADDR_LOOPBACK); //INADDR_LOOPBACK: ip que desgina o computador local, usando o loopback device: as mensagens não circulam na rede 
+    
+//     sad_loc_b.sin_family = AF_INET;
+//     sad_loc_b.sin_port = htons(PORT2);
+//     sad_loc_b.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    
+
+//     if ( (inet_aton(ip1, &sad_loc_f.sin_addr)==0) || (inet_aton(ip2, &sad_loc_b.sin_addr)==0) )
+//     {
+//         printf("\nInvalid address/ Address not supported \n");
+//         //return -1;
+//     }
+//     */
+
+
+// }
+
+//teste main
 int main()
 {
-    int state_id0 = 0; //Waiting for beacon to sync
-    int aux_beacon=0, aux_50ms, offset, aux_16ms;
-    
-    //***PCAP_Variables***//
-    pcap_t *handler;
-    char err_buf[PCAP_ERRBUF_SIZE];
-    struct pcap_pkthdr packet_header;
-    const u_char *packet;
-    //********************//
+    pthread_t pt_s;
+    pthread_t pt_c;
 
-        while (1)
-    {
-        if ( state_id0 == 0 && aux_beacon == 0)
-        {
-            printf("State 1\n");
-            aux_beacon = pcap(device, handler, &packet_header, err_buf);
-            printf("Aux beacon %d \n",aux_beacon);
-        }
-        else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
-        {
-            printf("State 2\n");
-            state_id0 = 1; //1->start downlink, receive
-            aux_beacon = 0;
-            aux_50ms = timer(50);
-            /*code*/
-        }
-        else if ( state_id0 == 1 && aux_50ms == 1 ) //Downlink over
-        {
-            printf("State 3\n");
-            state_id0 = 2; //2->wait for slot to transmit
-            aux_50ms = 0;
-            //offset = timer(0);
-            offset = 1;
-        }
-        else if ( state_id0 == 2 && offset == 1 ) //Uplink time to send socket
-        {
-            printf("State 4\n");
-            state_id0 = 3; //3->sending
-            offset = 0;
-            aux_16ms = timer(16);
-            /*code*/
-        }
-        else if ( state_id0 == 3 && aux_16ms == 1 ) 
-        {
-            printf("State 5\n");
-            state_id0 = 0; //Finished transmiting and waiting for beacon to sync 
-            aux_16ms = 0;  
-            
-        }
-    }
-    
-    
-    
-    
-    
-    
-    int socket_f = s_udp(); //socket forward 1 
-    int socket_b = s_udp(); //socket backward 2
+    pthread_create(&pt_s,NULL,serv,NULL);
+    pthread_join(pt_s,NULL);
 
-    sa sad_loc_f = s_addr(PORT1); //1
-    sa sad_loc_b = s_addr(PORT2); //2
-    /*
-    sad_loc_f.sin_family = AF_INET;
-    sad_loc_f.sin_port = htons(PORT1);
-    sad_loc_f.sin_addr.s_addr = htonl(INADDR_LOOPBACK); //INADDR_LOOPBACK: ip que desgina o computador local, usando o loopback device: as mensagens não circulam na rede 
+    pthread_create(&pt_c,NULL,cli,NULL);
+    pthread_join(pt_c,NULL);
     
-    sad_loc_b.sin_family = AF_INET;
-    sad_loc_b.sin_port = htons(PORT2);
-    sad_loc_b.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    
-
-    if ( (inet_aton(ip1, &sad_loc_f.sin_addr)==0) || (inet_aton(ip2, &sad_loc_b.sin_addr)==0) )
-    {
-        printf("\nInvalid address/ Address not supported \n");
-        //return -1;
-    }
-    */
-
-
+    return 0;
 }

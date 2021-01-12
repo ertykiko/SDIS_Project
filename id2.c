@@ -47,7 +47,7 @@ void* cli(void* arg)
     bzero(&servaddr,sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_addr(PORT);
+    servaddr = s_ip_addr(ip0,PORT);
 
     int n, len;
 
@@ -110,6 +110,6 @@ int main()
     int socket_f = s_udp(); //socket forward 0 
     int socket_b = s_udp(); //socket backward 1
 
-    sa sad_loc_f = s_addr(PORT0); //0
-    sa sad_loc_b = s_addr(PORT1); //1
+    sa sad_loc_f = s_addr(PORT); //0
+    sa sad_loc_b = s_addr(PORT); //1
 }

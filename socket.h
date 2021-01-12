@@ -17,19 +17,16 @@
 #include <arpa/inet.h>	//inet_addr
 #include <stdlib.h>
 #include <pthread.h>
-#include <pcap.h>
+//#include <pcap.h>
 #include <time.h>
 #include <stdbool.h>
 
 #define device "en1"
 #define MAXLINE 1024
 #define PORT 8080
-#define PORT0 8080
-#define PORT1 8080
-#define PORT2 8080
-#define ip0 "127.0.0.1"
-#define ip1 "127.0.0.1"
-#define ip2 "127.0.0.1"
+#define ip0 "10.10.10.195"
+#define ip1 "10.10.10.195"
+#define ip2 "10.10.10.195"
 
 typedef struct sockaddr_in sa;
 typedef struct ip_mreq m_req;
@@ -43,9 +40,9 @@ void s_bind(int s, sa s_addr);
 void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);
 void s_multicast(int s, m_req mreq);
-int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *err_buf);
+//int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *err_buf);
 
 
-void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
+//void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
 
 #endif /* socket_h */
