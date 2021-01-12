@@ -131,7 +131,7 @@ int capture_beacon(char * dev,int timeout,bool debugg )
     bpf_u_int32 ip;
     struct bpf_program fp;
     int num_packets = 1;
-    
+    clock_t timer1;
 
     /* Get IP and Subnet-mask associated with capture device */
     if (pcap_lookupnet(dev, &ip, &mask, error_buff) == -1)
@@ -142,10 +142,12 @@ int capture_beacon(char * dev,int timeout,bool debugg )
     }
 
     /* print capture info */
-    if(debugg==true)
+    if(debugg == true){
+
     printf("Device: %s\n", dev);
     printf("Number of packets: %d\n", num_packets);
     printf("Filter expression: %s\n", filter);
+    }
 
     /* open capture device */
     /*handle = pcap_open_live(dev, 3000, 1, timeout, error_buff);
@@ -174,7 +176,8 @@ int capture_beacon(char * dev,int timeout,bool debugg )
 
     //Beacon Broadcast ?
     //pcap_set_promisc(handle, 1); /* Capture packets that are not yours */
-
+    pcap_set_snaplen(handle,256);
+    pcap_set_buffer_size(handle,256);
     //activate device
     if (pcap_activate(handle) == PCAP_ERROR_ACTIVATED)
     {
@@ -210,12 +213,19 @@ int capture_beacon(char * dev,int timeout,bool debugg )
     }
 
     /* now we can set our callback function */
+    printf("Before loop\n");
+    timer1=clock();
 
     pcap_loop(handle, num_packets, my_packet_handler, NULL);
-    return 1;
+    printf("after loop\n");
+    
+   
     /* cleanup */
     pcap_freecode(&fp);
     pcap_close(handle);
     if(debugg==true)
     printf("\nCapture complete.\n");
+
+    return 1;
+}
 

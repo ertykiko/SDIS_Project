@@ -73,7 +73,7 @@ int main()
     {
         if ( state_id2 == 0 )
         {
-            aux_beacon = capture_beacon();
+            aux_beacon = capture_beacon("en1",200,true);
         }
         else if ( state_id2 == 0 && aux_beacon == 1 ) //sync, and start downlink
         {

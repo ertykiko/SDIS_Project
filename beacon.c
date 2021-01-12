@@ -1,9 +1,9 @@
-
-
+#include "socket.h"
 
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
 {
     int len=0;
+    printf("Packet %ld , %d",packet_header.ts.tv_sec,packet_header.ts.tv_usec);
     printf("Packet capture length: %d\n", packet_header.caplen);
     printf("Packet total length %d\n", packet_header.len);
     while (len < packet_header.len)
@@ -20,9 +20,7 @@ void my_packet_handler(u_char *args,const struct pcap_pkthdr *header,const u_cha
     /* Do something with the packet here. 
        The print_packet_info() function shows in the
        previous example could be used here. */
-    
-    print_packet_info(packet, *header); 
-    return;
+    //exit(EXIT_FAILURE);
 }
 
 int main()
@@ -34,11 +32,11 @@ int main()
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
-    int num_packets=10;
-    int timeout = 10000;
-    clock_t timer1;
+    int num_packets=1;
+    int timeout = 100;
+    const u_char *packet;
+    struct pcap_pkthdr packet_header;
 
-  
     /* Get IP and Subnet-mask associated with capture device */
     if (pcap_lookupnet(dev, &ip, &mask, error_buff) == -1)
     {
@@ -61,7 +59,8 @@ int main()
     }
     */
 
-   //Replace pcap_open_live()
+   //Replace
+    //handle = pcap_open_live(dev, BUFSIZ, 1, 1000, error_buff);
 
     //create handle
     handle = pcap_create(dev, error_buff);
@@ -77,28 +76,30 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    //Beacon Broadcast ?
-    //pcap_set_promisc(handle, 1); /* Capture packets that are not yours */
     
-    
+    pcap_set_snaplen(handle, 2304); // Set the snapshot length to 2304 MTU - 802.11
+    pcap_set_promisc(handle, 0);    // Turn promiscuous mode off
+    pcap_set_timeout(handle, 256);  // Set the timeout to 256 milliseconds
+
     //activate device
-    if(pcap_activate(handle)==PCAP_ERROR_ACTIVATED){
+    if (pcap_activate(handle) == PCAP_ERROR_ACTIVATED)
+    {
         printf("Already atcivated \n");
     }
+    
+    //DLT_EN10MB - Ethernet
+    //DLT_IEEE802_11_RADIO - Wifi
 
-        //DLT_EN10MB - Ethernet  
-        //DLT_IEEE802_11_RADIO - Wifi
-       
-        if (pcap_datalink(handle) != DLT_IEEE802_11_RADIO)
+    if (pcap_datalink(handle) != DLT_IEEE802_11_RADIO)
+    {
+        if (pcap_datalink(handle) == DLT_EN10MB)
+            fprintf(stderr, "%s is an ethernet device !\n", dev);
+        else
         {
-            if (pcap_datalink(handle) == DLT_EN10MB)
-                fprintf(stderr, "%s is an ethernet device !\n", dev);
-            else
-            {
-                fprintf(stderr, "%s is not a wlan packet !\n", dev);
-            }
-            
-                exit(EXIT_FAILURE);
+            fprintf(stderr, "%s is not a wlan packet !\n", dev);
+        }
+
+        exit(EXIT_FAILURE);
     }
     /* compile the filter expression */
     if (pcap_compile(handle, &fp, filter, 1, PCAP_NETMASK_UNKNOWN) == -1)
@@ -115,11 +116,20 @@ int main()
     }
     
     /* now we can set our callback function */
-    
-    pcap_loop(handle, num_packets, my_packet_handler, NULL);
+    clock_t t0 = clock();
+    printf(".......\n");
+    packet = pcap_next(handle,&packet_header);
+    //pcap_loop(handle,1,my_packet_handler,NULL);
+    clock_t t1 = clock();
+    printf("%f\n", (float)((t1 - t0) / 1000000.0F) *1000);
+    printf(".......\n");
+    print_packet_info(packet,packet_header);
+    //printf("%d\n",debbug);
 
-    /* cleanup */
-    pcap_freecode(&fp);
+    //rtd = ((float)(t1- t_send) / 1000000.0F) * 1000
+
+          /* cleanup */
+          pcap_freecode(&fp);
     pcap_close(handle);
 
     printf("\nCapture complete.\n");
