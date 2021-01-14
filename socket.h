@@ -29,6 +29,7 @@
 #define ip2 "10.10.10.195"
 
 typedef struct sockaddr_in sa;
+typedef int state;
 typedef struct ip_mreq m_req;
 typedef struct time_data{
     clock_t t_send;

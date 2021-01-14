@@ -68,9 +68,9 @@ void* cli(void* arg)
 
 int main()
 {
-    int state_id0 = 0; //Waiting for beacon to sync
-    int aux_beacon=0, aux_50ms, offset, aux_16ms;
-    
+    state state_id0 = 0; //Waiting for beacon to sync
+    int aux_beacon=0;
+    state get_time=0;
     //***PCAP_Variables***//
     pcap_t *handler;
     char err_buf[PCAP_ERRBUF_SIZE];
@@ -78,63 +78,65 @@ int main()
     const u_char *packet;
     //********************//
 
+    //-----clocks-----//
+    clock_t curr_clock,main_clock;
+
         while (1)
     {
+        main_clock=clock();
         
-        if ( state_id0 == 0 && aux_beacon == 0)
+        if (get_time == 1)
+        {
+            curr_clock=clock();
+            main_clock=clock();
+            get_time=0;
+        }
+        else if ( state_id0 == 0 && aux_beacon == 0 && get_time==0)
         {
             printf("Waiting for beacon\n");
-            aux_beacon = pcap(device, handler, &packet_header, err_buf);
+            aux_beacon = pcap(device, handler, &packet_header, err_buf); // ainda vamos ter que mudar para a funçao que apenas 
+            //procura o beacon - save time 
             
             printf("Aux beacon %d \n",aux_beacon);
-            aux_beacon = 0;
-        }
-        else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
-        {
-            printf("State 0 and Beacon Received\n");
-            state_id0 = 1; //1->start downlink, receive
-            aux_beacon = 0;
-            aux_50ms = timer(50);
-            /*code*/
-        }
-        else if ( state_id0 == 1 && aux_50ms == 1 ) //Downlink over
-        {
-            printf("State 1\n");
             
-            state_id0 = 2; //2->wait for slot to transmit
-            aux_50ms = 0;
-            //offset = timer(0);
-            offset = 1;
+            get_time = 1 ;
+            state_id0 = 1;
+
+            /*start downlink*/
         }
-        else if ( state_id0 == 2 && offset == 1 ) //Uplink time to send socket
+
+        else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //sync, and start downlink
         {
+            printf("State 1 \n");
+            state_id0 = 2; 
+            aux_beacon = 0;
+            get_time=1;
+            /*start tramit id1*/
+        }
+        else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //Downlink over
+        {
+            //Here we at 66.6
             printf("State 2\n");
-            state_id0 = 3; //3->sending
-            offset = 0;
-            aux_16ms = timer(16);
-            /*code*/
+            
+            state_id0 = 3; //2->wait for slot to transmit
+            
+            
         }
-        else if ( state_id0 == 3 && aux_16ms == 1 ) 
+        else if ( state_id0 == 3 ) //id1 is tramsiting
         {
-            printf("State 3\n");
+            printf("State 3\n Id1 it's trasmiting");
+            usleep(16300);
+            state_id0 = 4;
+        }
+        else if ( state_id0 == 4 ) 
+        {
+            printf("State 4\n Id2 it's trasmiting");
+            usleep(16300); // can be replaced for clock ---
             state_id0 = 0; //Finished transmiting and waiting for beacon to sync 
-            aux_16ms = 0;  
+            //Start over 
             
         }
     }
 }
 
-// teste main
-// int main()
-// {
-//     pthread_t pt_s;
-//     pthread_t pt_c;
-
-//     pthread_create(&pt_s,NULL,serv,NULL);
-//     pthread_join(pt_s,NULL);
-
-//     pthread_create(&pt_c,NULL,cli,NULL);
-//     pthread_join(pt_c,NULL);
     
-//     return 0;
-// }
