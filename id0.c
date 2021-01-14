@@ -66,61 +66,65 @@ void* cli(void* arg)
 
 
 
-// int main()
-// {
-//     int state_id0 = 0; //Waiting for beacon to sync
-//     int aux_beacon=0, aux_50ms, offset, aux_16ms;
+int main()
+{
+    int state_id0 = 0; //Waiting for beacon to sync
+    int aux_beacon=0, aux_50ms, offset, aux_16ms;
     
-//     //***PCAP_Variables***//
-//     pcap_t *handler;
-//     char err_buf[PCAP_ERRBUF_SIZE];
-//     struct pcap_pkthdr packet_header;
-//     const u_char *packet;
-//     //********************//
+    //***PCAP_Variables***//
+    pcap_t *handler;
+    char err_buf[PCAP_ERRBUF_SIZE];
+    struct pcap_pkthdr packet_header;
+    const u_char *packet;
+    //********************//
 
-//         while (1)
-//     {
-//         if ( state_id0 == 0 && aux_beacon == 0)
-//         {
-//             printf("State 1\n");
-//             //aux_beacon = pcap(device, handler, &packet_header, err_buf);
-//             printf("Aux beacon %d \n",aux_beacon);
-//         }
-//         else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
-//         {
-//             printf("State 2\n");
-//             state_id0 = 1; //1->start downlink, receive
-//             aux_beacon = 0;
-//             aux_50ms = timer(50);
-//             /*code*/
-//         }
-//         else if ( state_id0 == 1 && aux_50ms == 1 ) //Downlink over
-//         {
-//             printf("State 3\n");
-//             state_id0 = 2; //2->wait for slot to transmit
-//             aux_50ms = 0;
-//             //offset = timer(0);
-//             offset = 1;
-//         }
-//         else if ( state_id0 == 2 && offset == 1 ) //Uplink time to send socket
-//         {
-//             printf("State 4\n");
-//             state_id0 = 3; //3->sending
-//             offset = 0;
-//             aux_16ms = timer(16);
-//             /*code*/
-//         }
-//         else if ( state_id0 == 3 && aux_16ms == 1 ) 
-//         {
-//             printf("State 5\n");
-//             state_id0 = 0; //Finished transmiting and waiting for beacon to sync 
-//             aux_16ms = 0;  
+        while (1)
+    {
+        
+        if ( state_id0 == 0 && aux_beacon == 0)
+        {
+            printf("Waiting for beacon\n");
+            aux_beacon = pcap(device, handler, &packet_header, err_buf);
             
-//         }
-//     }
-// }
+            printf("Aux beacon %d \n",aux_beacon);
+            aux_beacon = 0;
+        }
+        else if ( state_id0 == 0 && aux_beacon == 1 ) //sync, and start downlink
+        {
+            printf("State 0 and Beacon Received\n");
+            state_id0 = 1; //1->start downlink, receive
+            aux_beacon = 0;
+            aux_50ms = timer(50);
+            /*code*/
+        }
+        else if ( state_id0 == 1 && aux_50ms == 1 ) //Downlink over
+        {
+            printf("State 1\n");
+            
+            state_id0 = 2; //2->wait for slot to transmit
+            aux_50ms = 0;
+            //offset = timer(0);
+            offset = 1;
+        }
+        else if ( state_id0 == 2 && offset == 1 ) //Uplink time to send socket
+        {
+            printf("State 2\n");
+            state_id0 = 3; //3->sending
+            offset = 0;
+            aux_16ms = timer(16);
+            /*code*/
+        }
+        else if ( state_id0 == 3 && aux_16ms == 1 ) 
+        {
+            printf("State 3\n");
+            state_id0 = 0; //Finished transmiting and waiting for beacon to sync 
+            aux_16ms = 0;  
+            
+        }
+    }
+}
 
-//teste main
+// teste main
 // int main()
 // {
 //     pthread_t pt_s;

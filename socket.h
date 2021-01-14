@@ -17,7 +17,7 @@
 #include <arpa/inet.h>	//inet_addr
 #include <stdlib.h>
 #include <pthread.h>
-//#include <pcap.h>
+#include <pcap.h>
 #include <time.h>
 #include <stdbool.h>
 
@@ -47,6 +47,6 @@ void s_multicast(int s, m_req mreq);
 //int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *err_buf);
 
 
-//void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
+void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
 
 #endif /* socket_h */

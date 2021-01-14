@@ -1,27 +1,27 @@
 #include "socket.h"
 
-void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
-{
-    int len=0;
-    printf("Packet %ld , %d",packet_header.ts.tv_sec,packet_header.ts.tv_usec);
-    printf("Packet capture length: %d\n", packet_header.caplen);
-    printf("Packet total length %d\n", packet_header.len);
-    while (len < packet_header.len)
-    {
-        printf("%02x ", *(packet++));
-        if (!(++len % 16))
-            printf("\n");
-    }
-    printf("\n");
-}
+// void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
+// {
+//     int len=0;
+//     printf("Packet %ld , %d",packet_header.ts.tv_sec,packet_header.ts.tv_usec);
+//     printf("Packet capture length: %d\n", packet_header.caplen);
+//     printf("Packet total length %d\n", packet_header.len);
+//     while (len < packet_header.len)
+//     {
+//         printf("%02x ", *(packet++));
+//         if (!(++len % 16))
+//             printf("\n");
+//     }
+//     printf("\n");
+// }
 
-void my_packet_handler(u_char *args,const struct pcap_pkthdr *header,const u_char *packet)
-{
-    /* Do something with the packet here. 
-       The print_packet_info() function shows in the
-       previous example could be used here. */
-    //exit(EXIT_FAILURE);
-}
+// void my_packet_handler(u_char *args,const struct pcap_pkthdr *header,const u_char *packet)
+// {
+//     /* Do something with the packet here. 
+//        The print_packet_info() function shows in the
+//        previous example could be used here. */
+//     //exit(EXIT_FAILURE);
+// }
 
 int main()
 {
