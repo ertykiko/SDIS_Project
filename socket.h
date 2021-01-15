@@ -23,10 +23,10 @@
 
 #define device "en1"
 #define MAXLINE 1024
-#define PORT 8080
-#define ip0 "10.10.10.195"
-#define ip1 "10.10.10.195"
-#define ip2 "10.10.10.195"
+#define PORT 9930
+#define ip0 "127.0.0.1"
+#define ip1 "127.0.0.1"
+#define ip2 "127.0.0.1"
 
 typedef struct sockaddr_in sa;
 typedef int state;
@@ -45,7 +45,7 @@ void s_bind(int s, sa s_addr);
 void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);
 void s_multicast(int s, m_req mreq);
-//int pcap(char *dev, pcap_t *handler, struct pcap_pkthdr *packet_header, char *err_buf);
+int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header);
 
 
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);

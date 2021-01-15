@@ -38,6 +38,7 @@ int main(){
     }
 
     /* print capture info */
+    if(debugg==true)
     printf("Device: %s\n", device);
     printf("Number of packets: %d\n", num_packets);
     printf("Filter expression: %s\n", filter);
