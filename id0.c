@@ -180,6 +180,8 @@ int main()
     //bind server aux
     aux_server aux_s;
     aux_s.i = 0;
+    //send aux
+    int send_aux = 0;
     
     int uno=1;
     firstpass =0;
@@ -197,8 +199,8 @@ int main()
         else if (st == 0 && aux_beacon == 0 && get_time == 0)
         {
             printf("Waiting for beacon\n %d Loop \n",firstpass);
-            aux_beacon = pcap(handler, &packet_header);   //Atraso maior que 50ms ! Porblema com o get time -  solution if 
-            
+            // aux_beacon = pcap(handler, &packet_header);   //Atraso maior que 50ms ! Porblema com o get time -  solution if 
+            aux_beacon = 1;
             get_time = 1;
             st = 1;
 
@@ -224,16 +226,30 @@ int main()
             st = 2;
             aux_beacon = 0;
             get_time = 1;
-        
-            
-            pthread_create(&pt_c, NULL, cli, NULL);
-            send = clock();
+            printf("send_aux:%d\n",send_aux);
+            if ( send_aux == 0 )
+            {
+                pthread_create(&pt_c, NULL, cli, NULL);
+                send = clock();
+                send_aux++;
+            }
+            else if ( send_aux == 1 )
+            {
+                send_aux++;
+            }
+            else if ( send_aux == 2 )
+            {
+                send_aux = 0;
+            }  
         }
         //ID0 is transmitting
         else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) 
         {
             //66,3 ms, ID0 haas ended -> Close thread
-            pthread_join(pt_c, NULL);
+            if ( send_aux == 1 )
+            {
+                pthread_join(pt_c, NULL);
+            }
             printf("State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
             st = 3; 
         }
