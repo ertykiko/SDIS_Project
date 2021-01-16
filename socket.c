@@ -30,7 +30,7 @@ void RTD(clock_t t_send, clock_t t_recv)
     float rtd = ((float)(t_recv - t_send) / 1000000.0F ) * 1000;
 
     FILE *fptr;
-    fptr = fopen("tempo.txt", "a");
+    fptr = fopen("tempo.csv", "a");
     fprintf(fptr, "%f\n", rtd);
     fclose(fptr);
 }

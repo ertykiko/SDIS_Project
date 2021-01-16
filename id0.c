@@ -9,7 +9,7 @@ void *serv(void *arg)
 
     // Creating socket file descriptor
     sockfd = s_udp();
-    s_reuse(sockfd);
+    // s_reuse(sockfd);
     //erases the data in the bytes of the memory
     bzero(&servaddr, sizeof(servaddr));
     bzero(&cliaddr, sizeof(cliaddr));
@@ -22,16 +22,17 @@ void *serv(void *arg)
     s_bind(sockfd, servaddr);
 
     int len, n;
+    while (1)
+    {
+        len = sizeof(cliaddr); //len is value/resuslt
 
-    len = sizeof(cliaddr); //len is value/resuslt
+        n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
+        buffer[n] = '\0';
+        printf("Client : %s\n", buffer);
+        sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
+        printf("Hello message sent.\n");
+    }
 
-    n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
-    buffer[n] = '\0';
-    printf("Client : %s\n", buffer);
-    sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
-    printf("Hello message sent.\n");
-
-    
     pthread_exit(NULL);
 }
 
@@ -44,7 +45,7 @@ void *cli(void *arg)
 
     // Creating socket file descriptor
     sockfd = s_udp();
-
+    // s_reuse(sockfd);
     //erases the data in the bytes of the memory
     bzero(&servaddr, sizeof(servaddr));
 
@@ -60,7 +61,7 @@ void *cli(void *arg)
     n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
     buffer[n] = '\0';
     printf("Server : %s\n", buffer);
-
+    
     close(sockfd);
 
     pthread_exit(NULL);
@@ -198,14 +199,14 @@ int main()
             printf("Waiting for beacon\n %d Loop \n",firstpass);
             aux_beacon = pcap(handler, &packet_header); // ainda vamos ter que mudar para a funçao que apenas
             //procura o beacon - save time
-
+            aux_beacon = 1;
             printf("Aux beacon %d \n", aux_beacon);
 
             get_time = 1;
             state_id0 = 1;
-
+            
             /*start downlink*/
-            //pthread_create(&pt_c, NULL, serv, NULL);
+            pthread_create(&pt_s, NULL, serv, NULL);
         }
 
         else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //sync, and start downlink
@@ -215,18 +216,16 @@ int main()
             aux_beacon = 0;
             get_time = 1;
             /*start tramit id1*/
-            pthread_create(&pt_s, NULL, serv, NULL);
+            // pthread_create(&pt_s, NULL, serv, NULL);
             
             pthread_create(&pt_c, NULL, cli, NULL);
-            
         }
         else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //Downlink over
         {
             //Here we at 66.6
-            //pthread_join(pt_s, NULL);
             pthread_join(pt_c, NULL);
+            // pthread_join(pt_s, NULL);
             
-
             printf("State 2\n");
 
             state_id0 = 3; //2->wait for slot to transmit
