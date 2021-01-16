@@ -178,6 +178,8 @@ int main()
     //bind server aux
     aux_server aux_s;
     aux_s.i = 0;
+    //send aux
+    int send_aux = 0;
 
     int uno = 1;
     firstpass = 0;
@@ -197,7 +199,7 @@ int main()
             printf("Waiting for beacon\n %d Loop \n", firstpass);
 
             aux_beacon = pcap(handler, &packet_header);
-
+            // aux_beacon = 1;
             get_time = 1;
             st = 1;
 
@@ -240,8 +242,21 @@ int main()
            //82,6 ms
            printf("State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");
            
-           pthread_create(&pt_c, NULL, cli, NULL);
-           send = clock();
+           printf("send_aux:%d\n",send_aux);
+            if ( send_aux == 2 )
+            {
+                pthread_create(&pt_c, NULL, cli, NULL);
+                send = clock();
+                send_aux = 0;
+            }
+            else if ( send_aux == 0 )
+            {
+                send_aux++;
+            }
+            else if ( send_aux == 1 )
+            {
+                send_aux = 2;
+            } 
 
            st = 4;
            get_time = 1;
@@ -250,7 +265,10 @@ int main()
         else if (st == 4 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0)
         {
             //Here at 98,9ms - Fecha a thread
-            pthread_join(pt_c, NULL);
+            if ( send_aux == 0 )
+            {
+                pthread_join(pt_c, NULL);
+            }
             printf("State 4 - ID2 has ended it's tramission, Loop back\n");
             st = 0; //Finished transmiting and waiting for beacon to sync
             firstpass++;   //Start over

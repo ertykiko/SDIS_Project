@@ -177,7 +177,9 @@ int main()
     //bind server aux
     aux_server aux_s;
     aux_s.i = 0;
-    
+    //send aux
+    int send_aux = 0;
+
     int uno=1;
     firstpass =0;
     while (1)
@@ -227,15 +229,29 @@ int main()
         {
             printf("State 2\n--Id1 it's trasmiting--\n");
             get_time = 1;
-            pthread_create(&pt_c, NULL, cli, NULL);
-            send = clock();
-            
+            printf("send_aux:%d\n",send_aux);
+            if ( send_aux == 1 )
+            {
+                pthread_create(&pt_c, NULL, cli, NULL);
+                send = clock();
+                send_aux++;
+            }
+            else if ( send_aux == 2 )
+            {
+                send_aux = 0;
+            }
+            else if ( send_aux == 0 )
+            {
+                send_aux = 1;
+            } 
             state_id0 = 3;
         }
         else if (state_id0 == 3 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //id1 finished transmitting
         {
-            pthread_join(pt_c, NULL);
-
+            if ( send_aux == 2 )
+            {
+                pthread_join(pt_c, NULL);
+            }
             //Here we at 82 id2->transmit
             printf("State 3 \n");
             state_id0 = 4;
