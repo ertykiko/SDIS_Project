@@ -177,12 +177,12 @@ int main()
     //-----clocks-----//
     clock_t curr_clock, main_clock;
     //Relogios do quinaz muito bonitos
-    clock_t send,recv;
+    clock_t send = 0,recv = 0;
 
     //Threads
     pthread_t pt_s;
     pthread_t pt_c;
-    firstpass =0;
+    firstpass = 0;
     while (1)
     {
 
@@ -207,6 +207,13 @@ int main()
             
             /*start downlink*/
             pthread_create(&pt_s, NULL, serv, NULL);
+
+            if(recv == 0){
+            recv = clock();
+            } else {
+            recv = clock();
+            RTD(send, recv);
+            }
         }
 
         else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //sync, and start downlink
@@ -219,6 +226,7 @@ int main()
             // pthread_create(&pt_s, NULL, serv, NULL);
             
             pthread_create(&pt_c, NULL, cli, NULL);
+            send = clock();
         }
         else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //Downlink over
         {
