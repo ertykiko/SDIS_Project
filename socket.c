@@ -122,6 +122,7 @@ void my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_c
 int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
 {
     const u_char *packet = pcap_next(handler, packet_header);
+    
     if (packet == NULL)
     {
         printf("Error reading Packet \n");
@@ -133,6 +134,7 @@ int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
         //print_packet_info(packet,*packet_header);
         return 1;
     }
+    
 }
 
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)

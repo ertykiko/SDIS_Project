@@ -2,6 +2,7 @@
 
 void *serv(void *arg)
 {
+    
     int sockfd;
     char buffer[MAXLINE];
     char *frame = "Hello from server";
@@ -25,19 +26,19 @@ void *serv(void *arg)
         aux->i = 1;
     }
     
-    // while (1)
-    // {
+     while (1)
+     {
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
         buffer[n] = '\0';
         if ( n >= 0 )
         {
-            printf("Client : %s\n", buffer);
+            printf("Received : %s\n", buffer);
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
-    // }
+     }
 
     pthread_exit(NULL);
 }
@@ -196,6 +197,7 @@ int main()
         else if (state_id0 == 0 && aux_beacon == 0 && get_time == 0)
         {
             printf("Waiting for beacon\n %d Loop \n",firstpass);
+            
             aux_beacon = pcap(handler, &packet_header); 
             
 
@@ -203,13 +205,18 @@ int main()
             state_id0 = 1;
             
             /*start downlink*/
-            pthread_create(&pt_s, NULL, serv, NULL);
+            
+            pthread_create(&pt_s, NULL, serv, (void*)&aux_s);
 
-            if(recv == 0){
-            recv = clock();
-            } else {
-            recv = clock();
-            RTD(send, recv);
+            if (recv == 0)
+            {
+                recv = clock();
+            }
+            else
+            {
+                recv = clock();
+                
+                RTD(send, recv);
             }
         }
 
@@ -222,7 +229,7 @@ int main()
             /*start tramit id1*/
             //50mns
             // pthread_create(&pt_s, NULL, serv, NULL);
-            if (uno == 1){
+            
 
             pthread_create(&pt_c, NULL, cli, NULL);
             send = clock();
