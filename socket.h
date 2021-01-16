@@ -21,7 +21,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define device "en0"
+#define device "en1"
 #define MAXLINE 1024
 #define PORT 9930
 #define ip0 "127.0.0.1"
@@ -35,6 +35,9 @@ typedef struct time_data{
     clock_t t_send;
     clock_t t_recv;
 } time_data;
+typedef struct aux_server{
+  int i;
+}aux_server;
 
 int timer(int t);
 void RTD(clock_t t_send, clock_t t_recv);

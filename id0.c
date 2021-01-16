@@ -6,31 +6,37 @@ void *serv(void *arg)
     char buffer[MAXLINE];
     char *frame = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
-
-    // Creating socket file descriptor
-    sockfd = s_udp();
-    // s_reuse(sockfd);
-    //erases the data in the bytes of the memory
-    bzero(&servaddr, sizeof(servaddr));
-    bzero(&cliaddr, sizeof(cliaddr));
-
-    // Filling server information
-    servaddr = s_addr(PORT);
-
-    // Bind the socket with the server address
-    
-    s_bind(sockfd, servaddr);
-
+    aux_server *aux = (aux_server *)arg;
     int len, n;
+
+    if ( aux->i == 0 ) 
+    {
+        // Creating socket file descriptor
+        sockfd = s_udp();
+        //erases the data in the bytes of the memory
+        bzero(&servaddr, sizeof(servaddr));
+        bzero(&cliaddr, sizeof(cliaddr));
+
+        // Filling server information
+        servaddr = s_addr(PORT);
+
+        // Bind the socket with the server address
+        s_bind(sockfd, servaddr);
+        aux->i = 1;
+    }
+    
     while (1)
     {
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
         buffer[n] = '\0';
-        printf("Client : %s\n", buffer);
-        sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
-        printf("Hello message sent.\n");
+        if ( n >= 0 )
+        {
+            printf("Client : %s\n", buffer);
+        }
+        // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
+        // printf("Hello message sent.\n");
     }
 
     pthread_exit(NULL);
@@ -55,12 +61,12 @@ void *cli(void *arg)
     int n, len;
 
     sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
-    printf("Hello message sent.\n");
+    printf("cli -> serv\n");
 
     //****Recebe do Server****//
-    n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
-    buffer[n] = '\0';
-    printf("Server : %s\n", buffer);
+    // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
+    // buffer[n] = '\0';
+    // printf("Server : %s\n", buffer);
     
     close(sockfd);
 
@@ -74,14 +80,14 @@ int main()
     //***PCAP_Variables***//
     pcap_t *handler;
     struct pcap_pkthdr packet_header;
-    char err_buf[PCAP_ERRBUF_SIZE];
-    const u_char *packet;
-    bool debug = false;
-    char error_buff[PCAP_ERRBUF_SIZE];
-    char filter[] = "wlan type mgt subtype beacon";
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
+
+    char error_buff[PCAP_ERRBUF_SIZE]; //Can be freed afer first pass ?
+    char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
+    
+    bool debug = false;
     //********************//s
     if (firstpass == 1)
     {
@@ -182,7 +188,12 @@ int main()
     //Threads
     pthread_t pt_s;
     pthread_t pt_c;
-    firstpass = 0;
+    //bind server aux
+    aux_server aux_s;
+    aux_s.i = 0;
+    
+
+    firstpass =0;
     while (1)
     {
 
@@ -199,7 +210,7 @@ int main()
             printf("Waiting for beacon\n %d Loop \n",firstpass);
             aux_beacon = pcap(handler, &packet_header); // ainda vamos ter que mudar para a funçao que apenas
             //procura o beacon - save time
-            aux_beacon = 1;
+            //aux_beacon = 1;
             printf("Aux beacon %d \n", aux_beacon);
 
             get_time = 1;
@@ -224,7 +235,7 @@ int main()
             get_time = 1;
             /*start tramit id1*/
             // pthread_create(&pt_s, NULL, serv, NULL);
-            
+            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
             pthread_create(&pt_c, NULL, cli, NULL);
             send = clock();
         }
