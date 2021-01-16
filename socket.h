@@ -35,6 +35,9 @@ typedef struct time_data{
     clock_t t_send;
     clock_t t_recv;
 } time_data;
+typedef struct aux_server{
+  int i;
+}aux_server;
 
 int timer(int t);
 void RTD(clock_t t_send, clock_t t_recv);
