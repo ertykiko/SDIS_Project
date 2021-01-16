@@ -164,7 +164,7 @@ int main()
     }
     //*************///
     //states
-    state state_id0 = 0; //Waiting for beacon to sync
+    state st = 0; //Waiting for beacon to sync
     state get_time = 0;
     int aux_beacon = 0;
     //-----clocks-----//
@@ -192,14 +192,14 @@ int main()
             main_clock = clock();
             get_time = 0;
         }
-        else if (state_id0 == 0 && aux_beacon == 0 && get_time == 0)
+        else if (st == 0 && aux_beacon == 0 && get_time == 0)
         {
             printf("Waiting for beacon\n %d Loop \n", firstpass);
 
             aux_beacon = pcap(handler, &packet_header);
 
             get_time = 1;
-            state_id0 = 1;
+            st = 1;
 
             /*start downlink*/
 
@@ -217,40 +217,42 @@ int main()
             }
         }
 
-        else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
+        else if (st == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
         {
             //50ms
             printf("State 1 - Donwlink is Over, ID0 will start trasmitting\n");
             aux_beacon = 0;
-            state_id0 = 2;
+            st = 2;
             get_time = 1;
         
         }
         //id0 is tramsiting
-        else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0) 
+        else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0) 
         {
-            //66ms
+            //66,3 ms
             printf("State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
-            state_id0 = 3; //2->wait for slot to transmit
+            st = 3; //2->wait for slot to transmit
             get_time=1;
         }
         //id1 is tramsiting
-        else if (state_id0 == 3 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0) 
+        else if (st == 3 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0) 
         {
-           //83ms
+           //82,6 ms
            printf("State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");
-           state_id0 = 4;
-           get_time = 1;
+           
            pthread_create(&pt_c, NULL, cli, NULL);
            send = clock();
+
+           st = 4;
+           get_time = 1;
         }
         //id2 is tramsiting
-        else if (state_id0 == 4 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0)
+        else if (st == 4 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0)
         {
-            //Here at 98ms - Fecha a thread
+            //Here at 98,9ms - Fecha a thread
             pthread_join(pt_c, NULL);
             printf("State 4 - ID2 has ended it's tramission, Loop back\n");
-            state_id0 = 0; //Finished transmiting and waiting for beacon to sync
+            st = 0; //Finished transmiting and waiting for beacon to sync
             firstpass++;   //Start over
         }
     }

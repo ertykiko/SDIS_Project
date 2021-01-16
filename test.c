@@ -2,7 +2,7 @@
 
 void *serv(void *arg)
 {
-    
+
     int sockfd;
     char buffer[MAXLINE];
     char *frame = "Hello from server";
@@ -10,7 +10,7 @@ void *serv(void *arg)
     aux_server *aux = (aux_server *)arg;
     int len, n;
 
-    if ( aux->i == 0 ) 
+    if (aux->i == 0)
     {
         // Creating socket file descriptor
         sockfd = s_udp();
@@ -25,20 +25,20 @@ void *serv(void *arg)
         s_bind(sockfd, servaddr);
         aux->i = 1;
     }
-    
-     while (1)
-     {
+
+    while (1)
+    {
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
         buffer[n] = '\0';
-        if ( n >= 0 )
+        if (n >= 0)
         {
             printf("Received : %s\n", buffer);
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
-     }
+    }
 
     pthread_exit(NULL);
 }
@@ -68,7 +68,7 @@ void *cli(void *arg)
     // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
     // buffer[n] = '\0';
     // printf("Server : %s\n", buffer);
-    
+
     close(sockfd);
 
     pthread_exit(NULL);
@@ -85,15 +85,13 @@ int main()
     bpf_u_int32 ip;
     struct bpf_program fp;
 
-    char error_buff[PCAP_ERRBUF_SIZE]; //Can be freed afer first pass ?
+    char error_buff[PCAP_ERRBUF_SIZE];              //Can be freed afer first pass ?
     char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
-    
+
     bool debug = false;
     //********************//s
     if (firstpass == 1)
     {
-
-        
 
         /* Get IP and Subnet-mask associated with capture device */
         if (pcap_lookupnet(device, &ip, &mask, error_buff) == -1)
@@ -172,7 +170,7 @@ int main()
     //-----clocks-----//
     clock_t curr_clock, main_clock;
     //Relogios do quinaz muito bonitos
-    clock_t send = 0,recv = 0;
+    clock_t send = 0, recv = 0;
 
     //Threads
     pthread_t pt_s;
@@ -180,80 +178,14 @@ int main()
     //bind server aux
     aux_server aux_s;
     aux_s.i = 0;
-    
-    int uno=1;
-    firstpass =0;
+
+    int uno = 1;
+    firstpass = 0;
     while (1)
     {
-
-        main_clock = clock();
-
-        if (get_time == 1)
-        {
-            curr_clock = clock();
-            main_clock = clock();
-            get_time = 0;
-        }
-        else if (st == 0 && aux_beacon == 0 && get_time == 0)
-        {
-            printf("Waiting for beacon\n %d Loop \n",firstpass);
-            aux_beacon = pcap(handler, &packet_header);   //Atraso maior que 50ms ! Porblema com o get time -  solution if 
-            
-            get_time = 1;
-            st = 1;
-
-            /*start downlink*/
-            pthread_create(&pt_s, NULL, serv, (void*)&aux_s);
-
-            if (recv == 0)
-            {
-                recv = clock();
-            }
-            else
-            {
-                recv = clock();
-                
-                RTD(send, recv);
-            }
-        }
-
-        else if (st == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
-        {
-            //50ms
-            printf("Downlink is over, ID0 will start trasmitting \n");
-            st = 2;
-            aux_beacon = 0;
-            get_time = 1;
-        
-            
-            pthread_create(&pt_c, NULL, cli, NULL);
-            send = clock();
-        }
-        //ID0 is transmitting
-        else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) 
-        {
-            //66,3 ms, ID0 haas ended -> Close thread
-            pthread_join(pt_c, NULL);
-            printf("State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
-            st = 3; 
-        }
-        //ID1 is transmitting
-        else if (st == 3) 
-        {
-            
-            printf("State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");
-            usleep(16300);
-            st = 4;
-        }
-        //ID2 is transmitting
-        else if (st == 4)
-        {
-            //98,3ms
-            printf("State 4 - ID2 has ended it's tramission, Loop back\n ");
-            usleep(16300); // can be replaced for clock ---
-            st = 0; //Finished transmiting and waiting for beacon to sync
-            firstpass ++ ;
-            //Start over
-        }
-    }
+        main=clock();
+        pcap(handler,&packet_header);
+       
 }
+}
+
