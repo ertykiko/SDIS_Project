@@ -80,14 +80,14 @@ int main()
     //***PCAP_Variables***//
     pcap_t *handler;
     struct pcap_pkthdr packet_header;
-    char err_buf[PCAP_ERRBUF_SIZE];
-    const u_char *packet;
-    bool debug = false;
-    char error_buff[PCAP_ERRBUF_SIZE];
-    char filter[] = "wlan type mgt subtype beacon";
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
+
+    char error_buff[PCAP_ERRBUF_SIZE]; //Can be freed afer first pass ?
+    char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
+    
+    bool debug = false;
     //********************//s
     if (firstpass == 1)
     {
@@ -210,7 +210,7 @@ int main()
             printf("Waiting for beacon\n %d Loop \n",firstpass);
             aux_beacon = pcap(handler, &packet_header); // ainda vamos ter que mudar para a funçao que apenas
             //procura o beacon - save time
-            aux_beacon = 1;
+            //aux_beacon = 1;
             printf("Aux beacon %d \n", aux_beacon);
 
             get_time = 1;

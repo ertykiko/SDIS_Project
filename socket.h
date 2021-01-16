@@ -21,7 +21,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define device "en0"
+#define device "en1"
 #define MAXLINE 1024
 #define PORT 9930
 #define ip0 "127.0.0.1"
