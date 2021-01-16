@@ -197,9 +197,10 @@ int main()
         else if (state_id0 == 0 && aux_beacon == 0 && get_time == 0)
         {
             printf("Waiting for beacon\n %d Loop \n",firstpass);
-            
-            aux_beacon = pcap(handler, &packet_header); 
-            
+            aux_beacon = pcap(handler, &packet_header); // ainda vamos ter que mudar para a funçao que apenas
+            //procura o beacon - save time
+            // aux_beacon = 1;
+            printf("Aux beacon %d \n", aux_beacon);
 
             get_time = 1;
             state_id0 = 1;
