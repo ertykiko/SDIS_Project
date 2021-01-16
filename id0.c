@@ -25,8 +25,8 @@ void *serv(void *arg)
         aux->i = 1;
     }
     
-    while (1)
-    {
+    // while (1)
+    // {
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
@@ -37,7 +37,7 @@ void *serv(void *arg)
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
-    }
+    // }
 
     pthread_exit(NULL);
 }
@@ -110,18 +110,6 @@ int main()
             printf("Filter expression: %s\n", filter);
         }
 
-        /* open capture device */
-        /*handler = pcap_open_live(dev, 3000, 1, timeout, error_buff);
-      if (handler == NULL)
-      {
-      fprintf(stderr, "Couldn't open device %s: %s\n", dev, error_buff);
-      exit(EXIT_FAILURE);
-      }
-      */
-
-        //Replace
-        //handler = pcap_open_live(dev, BUFSIZ, 1, 1000, error_buff);
-
         //create handler
 
         handler = pcap_create(device, error_buff);
@@ -192,7 +180,7 @@ int main()
     aux_server aux_s;
     aux_s.i = 0;
     
-
+    int uno=1;
     firstpass =0;
     while (1)
     {
@@ -208,10 +196,8 @@ int main()
         else if (state_id0 == 0 && aux_beacon == 0 && get_time == 0)
         {
             printf("Waiting for beacon\n %d Loop \n",firstpass);
-            aux_beacon = pcap(handler, &packet_header); // ainda vamos ter que mudar para a funçao que apenas
-            //procura o beacon - save time
-            //aux_beacon = 1;
-            printf("Aux beacon %d \n", aux_beacon);
+            aux_beacon = pcap(handler, &packet_header); 
+            
 
             get_time = 1;
             state_id0 = 1;
@@ -234,14 +220,16 @@ int main()
             aux_beacon = 0;
             get_time = 1;
             /*start tramit id1*/
+            //50mns
             // pthread_create(&pt_s, NULL, serv, NULL);
-            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+            if (uno == 1){
+
             pthread_create(&pt_c, NULL, cli, NULL);
             send = clock();
         }
         else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //Downlink over
         {
-            //Here we at 66.6
+            //Here we at 66.6 fecha a thread 
             pthread_join(pt_c, NULL);
             // pthread_join(pt_s, NULL);
             
