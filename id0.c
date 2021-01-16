@@ -221,7 +221,7 @@ int main()
             }
         }
 
-        else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //sync, and start downlink
+        else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
         {
             printf("State 1 \n");
             state_id0 = 2;
@@ -231,29 +231,30 @@ int main()
             //50mns
             // pthread_create(&pt_s, NULL, serv, NULL);
             
-
+            
             pthread_create(&pt_c, NULL, cli, NULL);
             send = clock();
         }
-        else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //Downlink over
+        //id0 is transmitting
+        else if (state_id0 == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) 
         {
             //Here we at 66.6 fecha a thread 
             pthread_join(pt_c, NULL);
-            // pthread_join(pt_s, NULL);
             
-            printf("State 2\n");
-
+            printf("State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
             state_id0 = 3; //2->wait for slot to transmit
         }
+        //id1 is transmitting
         else if (state_id0 == 3) //id1 is tramsiting
         {
-            printf("State 3\n--Id1 it's trasmiting--\n");
+            printf("State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");
             usleep(16300);
             state_id0 = 4;
         }
+        //id2 is transmitting
         else if (state_id0 == 4)
         {
-            printf("State 4\n--Id2 it's trasmiting--\n");
+            printf("State 4 - ID2 has ended it's tramission, Loop back\n ");
             usleep(16300); // can be replaced for clock ---
             state_id0 = 0; //Finished transmiting and waiting for beacon to sync
             firstpass ++ ;
