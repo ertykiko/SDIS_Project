@@ -130,8 +130,8 @@ int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
     }
     else
     {
-        printf("Sucess\n");
-        print_packet_info(packet,*packet_header);
+        //printf("Sucess\n");
+        //print_packet_info(packet,*packet_header);
         return 1;
     }
     

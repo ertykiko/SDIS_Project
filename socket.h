@@ -23,7 +23,10 @@
 
 #define device "en1"
 #define MAXLINE 1024
-#define PORT 9930
+#define PORT0 8080
+#define PORT1 8081
+#define PORT2 8082
+
 #define ip0 "127.0.0.1"
 #define ip1 "127.0.0.1"
 #define ip2 "127.0.0.1"

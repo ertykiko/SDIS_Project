@@ -14,12 +14,13 @@ void *serv(void *arg)
     {
         // Creating socket file descriptor
         sockfd = s_udp();
+        s_reuse(sockfd);
         //erases the data in the bytes of the memory
         bzero(&servaddr, sizeof(servaddr));
         bzero(&cliaddr, sizeof(cliaddr));
 
         // Filling server information
-        servaddr = s_addr(PORT);
+        servaddr = s_addr(PORT2);
 
         // Bind the socket with the server address
         s_bind(sockfd, servaddr);
@@ -34,7 +35,7 @@ void *serv(void *arg)
         buffer[n] = '\0';
         if (n >= 0)
         {
-            printf("Received : %s\n", buffer);
+            printf("Received : %s id2\n", buffer);
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
@@ -47,7 +48,7 @@ void *cli(void *arg)
 {
     int sockfd;
     char buffer[MAXLINE];
-    char *frame = "Hello from client";
+    char *frame = "Hello from client id2";
     struct sockaddr_in servaddr;
 
     // Creating socket file descriptor
@@ -57,7 +58,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip0, PORT);
+    servaddr = s_ip_addr(ip0, PORT2);
 
     int n, len;
 
@@ -74,9 +75,10 @@ void *cli(void *arg)
     pthread_exit(NULL);
 }
 
-int main()
+int main(int argc, char **argv)
 {
     int firstpass = 1;
+    int max_loops = 5;
     //*****Setting up connection to wireless card ***//
     //***PCAP_Variables***//
     pcap_t *handler;
@@ -196,7 +198,8 @@ int main()
         }
         else if (st == 0 && aux_beacon == 0 && get_time == 0)
         {
-            printf("Waiting for beacon\n %d Loop \n", firstpass);
+            printf("----ID2----\n");
+            printf("id2 - Waiting for beacon\n %d Loop \n", firstpass);
 
             aux_beacon = pcap(handler, &packet_header);
             // aux_beacon = 1;
@@ -222,7 +225,7 @@ int main()
         else if (st == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
         {
             //50ms
-            printf("State 1 - Donwlink is Over, ID0 will start trasmitting\n");
+            printf("id2 - State 1 - Donwlink is Over, ID0 will start trasmitting\n");
             aux_beacon = 0;
             st = 2;
             get_time = 1;
@@ -232,7 +235,7 @@ int main()
         else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0) 
         {
             //66,3 ms
-            printf("State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
+            printf("id2 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
             st = 3; //2->wait for slot to transmit
             get_time=1;
         }
@@ -240,8 +243,8 @@ int main()
         else if (st == 3 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3) && get_time == 0) 
         {
            //82,6 ms
-           printf("State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");
-           
+           printf("id2 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");
+
            printf("send_aux:%d\n",send_aux);
             if ( send_aux == 2 )
             {
@@ -269,9 +272,13 @@ int main()
             {
                 pthread_join(pt_c, NULL);
             }
-            printf("State 4 - ID2 has ended it's tramission, Loop back\n");
+            printf("id2 - State 4 - ID2 has ended it's tramission, Loop back\n");
             st = 0; //Finished transmiting and waiting for beacon to sync
             firstpass++;   //Start over
+        }
+        else if (firstpass == max_loops)
+        {
+            exit(EXIT_FAILURE);
         }
     }
 }

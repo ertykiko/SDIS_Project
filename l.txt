@@ -1,0 +1,157 @@
+MBPdeFrancisco2:SDIS_Project rodas$ sh tdma.sh
+tdma.sh: line 11: ./id0_pid=1921: No such file or directory
+tdma.sh: line 17: ./id1_pid=1923: No such file or directory
+----ID0----
+id0 - Waiting for beacon
+ 0 Loop 
+----ID1----
+id1 - Waiting for beacon
+ 0 Loop 
+----ID2----
+id2 - Waiting for beacon
+ 0 Loop 
+
+bind failed
+
+bind failed
+id0 - Downlink is over, ID0 will start trasmitting 
+id0 - send_aux:0
+cli -> serv
+id1 - State 1
+--Id0 it's trasmiting--
+id2 - State 1 - Donwlink is Over, ID0 will start trasmitting
+State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id0 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+id2 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id1 - State 2
+--Id1 it's trasmiting--
+send_aux:0
+id0 - State 4 - ID2 has ended it's tramission, Loop back
+id2 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+send_aux:0
+id1 - State 3 
+id1 - State 4
+--Id2 it's trasmiting--
+id2 - State 4 - ID2 has ended it's tramission, Loop back
+----ID2----
+id2 - Waiting for beacon
+ 1 Loop 
+ ----ID0----
+id0 - Waiting for beacon
+ 1 Loop 
+----ID1----
+id1 - Waiting for beacon
+ 1 Loop 
+id2 - State 1 - Donwlink is Over, ID0 will start trasmitting
+id0 - Downlink is over, ID0 will start trasmitting 
+id0 - send_aux:1
+id1 - State 1
+--Id0 it's trasmiting--
+id2 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id0 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+id2 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+send_aux:1
+id1 - State 2
+--Id1 it's trasmiting--
+send_aux:1
+cli -> serv
+id2 - State 4 - ID2 has ended it's tramission, Loop back
+----ID2----
+id2 - Waiting for beacon
+ 2 Loop 
+id0 - State 4 - ID2 has ended it's tramission, Loop back
+id1 - State 3 
+id1 - State 4
+--Id2 it's trasmiting--
+ ----ID0----
+id0 - Waiting for beacon
+ 2 Loop 
+----ID1----
+id1 - Waiting for beacon
+ 2 Loop 
+id2 - State 1 - Donwlink is Over, ID0 will start trasmitting
+id2 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id2 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+send_aux:2
+cli -> serv
+Received : Hello from client id2 on id0'
+id2 - State 4 - ID2 has ended it's tramission, Loop back
+----ID2----
+id2 - Waiting for beacon
+ 3 Loop 
+id1 - State 1
+--Id0 it's trasmiting--
+id0 - Downlink is over, ID0 will start trasmitting 
+id0 - send_aux:2
+id2 - State 1 - Donwlink is Over, ID0 will start trasmitting
+State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id0 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+id2 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id1 - State 2
+--Id1 it's trasmiting--
+send_aux:2
+id2 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+send_aux:0
+id2 - State 4 - ID2 has ended it's tramission, Loop back
+----ID2----
+id2 - Waiting for beacon
+ 4 Loop 
+id1 - State 3 
+id1 - State 4
+--Id2 it's trasmiting--
+id0 - State 4 - ID2 has ended it's tramission, Loop back
+id2 - State 1 - Donwlink is Over, ID0 will start trasmitting
+id2 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+----ID1----
+id1 - Waiting for beacon
+ 3 Loop 
+id2 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+send_aux:1
+id2 - State 4 - ID2 has ended it's tramission, Loop back
+----ID2----
+id2 - Waiting for beacon
+ 5 Loop 
+ ----ID0----
+id0 - Waiting for beacon
+ 3 Loop 
+MBPdeFrancisco2:SDIS_Project rodas$ id1 - State 1
+--Id0 it's trasmiting--
+id0 - Downlink is over, ID0 will start trasmitting 
+id0 - send_aux:0
+cli -> serv
+State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id0 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+id1 - State 2
+--Id1 it's trasmiting--
+send_aux:0
+id1 - State 3 
+id1 - State 4
+--Id2 it's trasmiting--
+id0 - State 4 - ID2 has ended it's tramission, Loop back
+----ID1----
+id1 - Waiting for beacon
+ 4 Loop 
+ ----ID0----
+id0 - Waiting for beacon
+ 4 Loop 
+id0 - Downlink is over, ID0 will start trasmitting 
+id0 - send_aux:1
+id1 - State 1
+--Id0 it's trasmiting--
+State 2 - ID0 has ended it's tramission, ID1 will start transmitting
+id0 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting
+id1 - State 2
+--Id1 it's trasmiting--
+send_aux:1
+cli -> serv
+id0 - State 4 - ID2 has ended it's tramission, Loop back
+id1 - State 3 
+id1 - State 4
+--Id2 it's trasmiting--
+ ----ID0----
+id0 - Waiting for beacon
+ 5 Loop 
+----ID1----
+id1 - Waiting for beacon
+ 5 Loop 
