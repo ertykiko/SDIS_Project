@@ -182,7 +182,7 @@ int main(int argc, char **argv)
     aux_server aux_s;
     aux_s.i = 0;
     //send aux
-    int send_aux = 0;
+    int send_aux_0 = 0;
     
     int uno=1;
     firstpass =0;
@@ -229,27 +229,27 @@ int main(int argc, char **argv)
             st = 2;
             aux_beacon = 0;
             get_time = 1;
-            printf("id0 - send_aux:%d\n", send_aux);
-            if ( send_aux == 0 )
+            printf("id0 - send_aux_0:%d\n", send_aux_0);
+            if ( send_aux_0 == 0 )
             {
                 pthread_create(&pt_c, NULL, cli, NULL);
                 send = clock();
-                send_aux++;
+                send_aux_0++;
             }
-            else if ( send_aux == 1 )
+            else if ( send_aux_0 == 1 )
             {
-                send_aux++;
+                send_aux_0++;
             }
-            else if ( send_aux == 2 )
+            else if ( send_aux_0 == 2 )
             {
-                send_aux = 0;
+                send_aux_0 = 0;
             }  
         }
         //ID0 is transmitting
         else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) 
         {
             //66,3 ms, ID0 haas ended -> Close thread
-            if ( send_aux == 1 )
+            if ( send_aux_0 == 1 )
             {
                 pthread_join(pt_c, NULL);
             }
