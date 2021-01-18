@@ -21,7 +21,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define device "en1"
+#define device "wlp3s0"
 #define MAXLINE 1024
 #define PORT0 8080
 #define PORT1 8081
@@ -43,7 +43,7 @@ typedef struct aux_server{
 }aux_server;
 
 int timer(int t);
-void RTD(clock_t t_send, clock_t t_recv);
+void RTD(long long t_send, long long t_recv);
 int s_udp();
 sa s_addr(int port);
 sa s_ip_addr(char *ip, int port);

@@ -24,13 +24,13 @@ int timer(int t) //return 1 when t ms
     return 0;
 }
 
-void RTD(clock_t t_send, clock_t t_recv)
+void RTD(long long t_send, long long t_recv)
 {
-    float rtd = ((float)(t_recv - t_send) / 1000000.0F) * 1000;
+    long long rtd = (long)(t_recv - t_send)/1000000.0;
 
     FILE *fptr;
     fptr = fopen("tempo.csv", "a");
-    fprintf(fptr, "%f\n", rtd);
+    fprintf(fptr, "%lld\n", rtd);
     fclose(fptr);
 }
 

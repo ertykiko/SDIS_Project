@@ -77,7 +77,7 @@ void *cli(void *arg)
 int main(int argc, char **argv)
 {
     int firstpass = 1;
-    int max_loops = 5;
+    int max_loops = 200;
     //*****Setting up connection to wireless card ***//
     //***PCAP_Variables***//
     pcap_t *handler;
@@ -173,7 +173,16 @@ int main(int argc, char **argv)
     //-----clocks-----//
     clock_t curr_clock, main_clock;
     //Relogios do quinaz muito bonitos
-    clock_t send = 0,recv = 0;
+    struct timespec send, recv, clock1, clock2;
+    clock1.tv_nsec = 0;
+    clock1.tv_sec = 0;
+    clock2.tv_sec = 0;
+    clock2.tv_sec = 0;
+    recv.tv_nsec = 0;
+    recv.tv_sec = 0;
+    send.tv_nsec = 0;
+    send.tv_sec = 0;
+    int time0;
 
     //Threads
     pthread_t pt_s;
@@ -189,12 +198,12 @@ int main(int argc, char **argv)
     while (1)
     {
 
-        main_clock = clock();
+        main_clock = clock_gettime(CLOCK_MONOTONIC, &clock1);
 
         if (get_time == 1)
         {
-            curr_clock = clock();
-            main_clock = clock();
+            curr_clock = clock_gettime(CLOCK_MONOTONIC, &clock1);
+            clock2 = clock1;
             get_time = 0;
         }
         else if (st == 0 && aux_beacon == 0 && get_time == 0)
@@ -202,7 +211,7 @@ int main(int argc, char **argv)
             printf("----ID0----\n");
             printf("id0 - Waiting for beacon\n %d Loop \n", firstpass);
 
-            aux_beacon = pcap(handler, &packet_header); //Atraso maior que 50ms ! Porblema com o get time -  solution if 
+            // aux_beacon = pcap(handler, &packet_header); //Atraso maior que 50ms ! Porblema com o get time -  solution if
             aux_beacon = 1;
             get_time = 1;
             st = 1;
@@ -210,22 +219,22 @@ int main(int argc, char **argv)
             /*start downlink*/
             pthread_create(&pt_s, NULL, serv, (void*)&aux_s);
 
-            if (recv == 0)
-            {
-                recv = clock();
+            if (recv.tv_nsec == 0){
+                time0 = clock_gettime(CLOCK_MONOTONIC, &recv);
             }
             else
             {
-                recv = clock();
-                
-                RTD(send, recv);
+                RTD(send.tv_nsec, recv.tv_nsec);
             }
+
+            printf("%ld\n",(long)(((clock1.tv_nsec - clock2.tv_nsec) / 1000000)));
         }
 
-        else if (st == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
+        else if (st == 1 && aux_beacon == 1 && get_time == 0 && ((((clock1.tv_nsec - clock2.tv_nsec) / 1000000)) >= 50)) //Downlink over
         {
             //50ms
             printf("id0 - State 1 -Downlink is over, ID0 will start trasmitting \n");
+            printf("%ld\n",(long)(((clock1.tv_nsec - clock2.tv_nsec) / 1000000)));
             st = 2;
             aux_beacon = 0;
             get_time = 1;
@@ -233,7 +242,7 @@ int main(int argc, char **argv)
             if ( send_aux == 0 )
             {
                 pthread_create(&pt_c, NULL, cli, NULL);
-                send = clock();
+                time0 = clock_gettime(CLOCK_MONOTONIC, &send);
                 send_aux++;
             }
             else if ( send_aux == 1 )
@@ -246,7 +255,7 @@ int main(int argc, char **argv)
             }  
         }
         //ID0 is transmitting
-        else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) 
+        else if (st == 2 && ((((clock1.tv_nsec - clock2.tv_nsec) / 1000000)) >= 16))
         {
             //66,3 ms, ID0 haas ended -> Close thread
             if ( send_aux == 1 )
@@ -254,6 +263,7 @@ int main(int argc, char **argv)
                 pthread_join(pt_c, NULL);
             }
             printf("id0 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
+            printf("%ld\n",(long)(((clock1.tv_nsec - clock2.tv_nsec) / 1000000)));
             st = 3; 
         }
         //ID1 is transmitting
