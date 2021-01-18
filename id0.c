@@ -211,8 +211,8 @@ int main(int argc, char **argv)
             printf("----ID0----\n");
             printf("id0 - Waiting for beacon\n %d Loop \n", firstpass);
 
-            // aux_beacon = pcap(handler, &packet_header); //Atraso maior que 50ms ! Porblema com o get time -  solution if
-            aux_beacon = 1;
+            aux_beacon = pcap(handler, &packet_header); //Atraso maior que 50ms ! Porblema com o get time -  solution if
+            // aux_beacon = 1;
             get_time = 1;
             st = 1;
 
