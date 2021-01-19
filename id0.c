@@ -179,6 +179,8 @@ int main(int argc, char **argv)
 
     send.tv_nsec = 0;
     send.tv_sec = 0;
+    recv.tv_nsec = 0;
+    recv.tv_nsec = 0;
 
     //Threads
     pthread_t pt_s;
@@ -206,9 +208,9 @@ int main(int argc, char **argv)
            state_id0=2;
        }
 
-       else if ( (state_id0 == 2) && (!pthread_join(pt_s, NULL) || (base_clock.tv_nsec - send.tv_nsec) > 16000000))
+       else if ( (state_id0 == 2) && (!pthread_join(pt_c, NULL) || (base_clock.tv_nsec - send.tv_nsec) > 16000000))
        {
-            RTD(send.tv_nsec,recv.tv_nsec);
+            RTD(recv.tv_nsec,send.tv_nsec);
             state_id0=0;
        }
 
