@@ -26,7 +26,7 @@ int timer(int t) //return 1 when t ms
 
 void RTD(long t_send, long t_recv)
 {
-    long rtd = ((t_recv - t_send)/1000000);
+    float rtd = (float)((t_recv - t_send)/1000000.0F);
 
     if(rtd < 0){
         return;
@@ -34,7 +34,7 @@ void RTD(long t_send, long t_recv)
 
     FILE *fptr;
     fptr = fopen("tempo.csv", "a");
-    fprintf(fptr, "%ld\n", rtd);
+    fprintf(fptr, "%f\n", rtd);
     fclose(fptr);
     }
 }
