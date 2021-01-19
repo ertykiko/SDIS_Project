@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <string.h>
 //#include <inttypes.h>
 #include <string.h> 
 #include <arpa/inet.h>	//inet_addr

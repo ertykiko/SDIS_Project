@@ -85,7 +85,7 @@ int main(int argc, char **argv)
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
-
+    char *ipo;
     char error_buff[PCAP_ERRBUF_SIZE]; //Can be freed afer first pass ?
     char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
     
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
     aux_server aux_s;
     aux_s.i = 0;
     //send aux
-    int send_aux = 0;
+    int send_aux_1 = 0;
 
     int uno=1;
     firstpass =0;
@@ -190,13 +190,14 @@ int main(int argc, char **argv)
 
         if (get_time == 1)
         {
+            //Estado da Temporização
             curr_clock = clock();
             main_clock = clock();
             get_time = 0;
         }
         else if (state_id0 == 0 && aux_beacon == 0 && get_time == 0)
         {
-            printf("----ID1----\n");
+            //printf("----ID1----\n");
             printf("id1 - Waiting for beacon\n %d Loop \n",firstpass);
             aux_beacon = pcap(handler, &packet_header); 
            
@@ -222,53 +223,53 @@ int main(int argc, char **argv)
         else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //finish downlink
         {
             aux_beacon = 0;
-            printf("id1 - State 1\n--Id0 it's trasmiting--\n");
+            //printf("id1 - State 1\n--Id0 it's trasmiting--\n");
             usleep(16300);
             state_id0 = 2;
         }
         else if (state_id0 == 2) //id1 is tramsiting
         {
-            printf("id1 - State 2\n--Id1 it's trasmiting--\n");
+            //printf("id1 - State 2\n--Id1 it's trasmiting--\n");
             get_time = 1;
-            printf("send_aux:%d\n",send_aux);
-            if ( send_aux == 1 )
+            //printf("send_aux_1:%d\n",send_aux_1);
+            if ( send_aux_1 == 1 )
             {
                 pthread_create(&pt_c, NULL, cli, NULL);
                 send = clock();
-                send_aux++;
+                send_aux_1++;
             }
-            else if ( send_aux == 2 )
+            else if ( send_aux_1 == 2 )
             {
-                send_aux = 0;
+                send_aux_1 = 0;
             }
-            else if ( send_aux == 0 )
+            else if ( send_aux_1 == 0 )
             {
-                send_aux = 1;
+                send_aux_1 = 1;
             } 
             state_id0 = 3;
         }
         else if (state_id0 == 3 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //id1 finished transmitting
         {
-            if ( send_aux == 2 )
+            if ( send_aux_1 == 2 )
             {
                 pthread_join(pt_c, NULL);
             }
             //Here we at 82 id2->transmit
-            printf("id1 - State 3 \n");
+            //printf("id1 - State 3 \n");
             state_id0 = 4;
 
         }
         else if (state_id0 == 4) //id2 is tramsiting
         {
-            printf("id1 - State 4\n--Id2 it's trasmiting--\n");
+            //printf("id1 - State 4\n--Id2 it's trasmiting--\n");
             usleep(16300); // can be replaced for clock ---
             state_id0 = 0; //Finished transmiting and waiting for beacon to sync
             firstpass ++ ;
             //Start over
         }
-        else if (firstpass == max_loops)
-        {
-            exit(EXIT_FAILURE);
-        }
+        // else if (firstpass == max_loops)
+        // {
+        //     exit(EXIT_FAILURE);
+        // }
     }
 }

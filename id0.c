@@ -274,8 +274,8 @@ int main(int argc, char **argv)
             firstpass ++ ;
             //Start over
         }
-        else if (firstpass == max_loops){
-            exit(EXIT_FAILURE);
-        }
+        // else if (firstpass == max_loops){
+        //     exit(EXIT_FAILURE);
+        // }
     }
 }

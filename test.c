@@ -19,7 +19,7 @@ void *serv(void *arg)
         bzero(&cliaddr, sizeof(cliaddr));
 
         // Filling server information
-        servaddr = s_addr(PORT);
+        servaddr = s_addr(PORT1);
 
         // Bind the socket with the server address
         s_bind(sockfd, servaddr);
@@ -57,7 +57,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip1, PORT);
+    servaddr = s_ip_addr(ip1, PORT1);
 
     int n, len;
 
@@ -126,7 +126,7 @@ int main()
 
         pcap_set_snaplen(handler, 2304); // Set the snapshot length to 2304 MTU - 802.11
         pcap_set_promisc(handler, 0);    // Turn promiscuous mode off
-        pcap_set_timeout(handler, 256);  // Set the timeout to 256 milliseconds
+        pcap_set_timeout(handler, 1000);  // Set the timeout to 256 milliseconds
 
         //activate device
         if (pcap_activate(handler) == PCAP_ERROR_ACTIVATED)
@@ -183,7 +183,7 @@ int main()
     firstpass = 0;
     while (1)
     {
-        main=clock();
+        //main=clock();
         pcap(handler,&packet_header);
        
 }
