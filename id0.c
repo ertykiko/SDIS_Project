@@ -194,24 +194,22 @@ int main(int argc, char **argv)
         clock_gettime(CLOCK_REALTIME, &base_clock);
 
        if (state_id0 == 0 && pcap(handler,&packet_header)){
-           clock_gettime(CLOCK_REALTIME, &send);
+           clock_gettime(CLOCK_REALTIME, &recv);
            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
            state_id0=1;
        }
 
        else if( state_id0 == 1 && (base_clock.tv_nsec - recv.tv_nsec) > 50000000){
            //start server
-           clock_gettime(CLOCK_REALTIME, &recv);
+           clock_gettime(CLOCK_REALTIME, &send);
            pthread_create(&pt_c, NULL, cli, NULL);
-
            state_id0=2;
        }
 
-       else if ( (state_id0 == 2) && (!pthread_join(pt_s, NULL) || (base_clock.tv_nsec - recv.tv_nsec) > 16000000))
+       else if ( (state_id0 == 2) && (!pthread_join(pt_s, NULL) || (base_clock.tv_nsec - send.tv_nsec) > 16000000))
        {
             RTD(send.tv_nsec,recv.tv_nsec);
             state_id0=0;
-
        }
 
     }
