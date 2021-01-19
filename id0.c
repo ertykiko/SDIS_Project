@@ -181,6 +181,8 @@ int main(int argc, char **argv)
     send.tv_sec = 0;
     recv.tv_nsec = 0;
     recv.tv_nsec = 0;
+    wait.tv_nsec = 0;
+    wait.tv_nsec = 0;
 
     //Threads
     pthread_t pt_s;
@@ -195,22 +197,25 @@ int main(int argc, char **argv)
 
         clock_gettime(CLOCK_REALTIME, &base_clock);
 
-       if (state_id0 == 0 && pcap(handler,&packet_header)){
-           clock_gettime(CLOCK_REALTIME, &recv);
+//       if (state_id0 == 0 && pcap(handler,&packet_header)){
+       if (state_id0 == 0){
            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+           clock_gettime(CLOCK_REALTIME, &recv);
            state_id0=1;
        }
 
        else if( state_id0 == 1 && (base_clock.tv_nsec - recv.tv_nsec) > 50000000){
            //start server
-           clock_gettime(CLOCK_REALTIME, &send);
            pthread_create(&pt_c, NULL, cli, NULL);
+           clock_gettime(CLOCK_REALTIME, &send);
            state_id0=2;
        }
 
        else if ( (state_id0 == 2) && (!pthread_join(pt_c, NULL) || (base_clock.tv_nsec - send.tv_nsec) > 16000000))
        {
             RTD(recv.tv_nsec,send.tv_nsec);
+            bzero(&send,sizeof(send));
+            bzero(&recv,sizeof(send));
             state_id0=0;
        }
 

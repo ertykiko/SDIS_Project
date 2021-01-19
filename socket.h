@@ -21,7 +21,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define device "wlp3s0mon"
+#define device "wlp3s0"
 #define MAXLINE 1024
 #define PORT0 8080
 #define PORT1 8081
