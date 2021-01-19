@@ -1,4 +1,5 @@
 #include "socket.h"
+#include <pthread.h>
 
 void *serv(void *arg)
 {
@@ -170,7 +171,7 @@ int main(int argc, char **argv)
     //-----clocks-----//
     clock_t curr_clock, main_clock;
     //Relogios do quinaz muito bonitos
-    struct timespec send, recv, base_clock;
+    struct timespec send, recv, base_clock, wait;
 
     send.tv_nsec = 0;
     send.tv_sec = 0;
@@ -195,18 +196,22 @@ int main(int argc, char **argv)
            clock_gettime(CLOCK_REALTIME, &send);
            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
            state_id0=1;
+           pthread_join(pt_s, NULL);
+           usleep(50000);
        }
 
-       else if( state_id0 == 1 && (base_clock.tv_nsec - recv.tv_nsec) > 50000000){
+       else if(state_id0 == 1){
            //start server
            clock_gettime(CLOCK_REALTIME, &recv);
            pthread_create(&pt_c, NULL, cli, NULL);
-
            state_id0=2;
+           pthread_join(pt_c, NULL);
+           usleep(16000);
        }
 
-       else if ( (state_id0 == 2) && (!pthread_join(pt_s, NULL) || (base_clock.tv_nsec - recv.tv_nsec) > 16000000))
+       else if (state_id0 == 2)
        {
+           clock_gettime(CLOCK_REALTIME, &wait);
             RTD(send.tv_nsec,recv.tv_nsec);
             state_id0=0;
 
