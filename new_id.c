@@ -185,26 +185,24 @@ int main(int argc, char **argv)
     //send aux
     int send_aux_1 = 0;
 
-
-    
-    
     while(1){
 
         clock_gettime(CLOCK_REALTIME, &base_clock);
 
        if (state_id0 == 0 && pcap(handler,&packet_header)){
-           clock_gettime(CLOCK_REALTIME, &send);
+ //      if (state_id0 == 0){
            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+           clock_gettime(CLOCK_REALTIME, &recv);
            state_id0=1;
-           pthread_join(pt_s, NULL);
            usleep(50000);
        }
 
        else if(state_id0 == 1){
            //start server
-           clock_gettime(CLOCK_REALTIME, &recv);
            pthread_create(&pt_c, NULL, cli, NULL);
+           clock_gettime(CLOCK_REALTIME, &send);
            state_id0=2;
+           pthread_join(pt_s, NULL);
            pthread_join(pt_c, NULL);
            usleep(16000);
        }
@@ -212,7 +210,8 @@ int main(int argc, char **argv)
        else if (state_id0 == 2)
        {
            clock_gettime(CLOCK_REALTIME, &wait);
-            RTD(send.tv_nsec,recv.tv_nsec);
+            RTD(recv.tv_nsec ,send.tv_nsec);
+            RTD(send.tv_nsec, wait.tv_nsec);
             state_id0=0;
 
        }
