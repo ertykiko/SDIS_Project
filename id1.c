@@ -6,12 +6,9 @@ void *serv(void *arg)
     char buffer[MAXLINE];
     char *frame = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
-    aux_server *aux = (aux_server *)arg;
     int len, n;
     struct timespec start, end;
 
-    // if ( aux->i == 0 )
-    // {
         // Creating socket file descriptor
         clock_gettime(CLOCK_REALTIME, &start);
         sockfd = s_udp();
@@ -25,8 +22,6 @@ void *serv(void *arg)
 
         // Bind the socket with the server address
         s_bind(sockfd, servaddr);
-        aux->i = 1;
-    //}
     
         len = sizeof(cliaddr); //len is value/resuslt
 
@@ -34,16 +29,13 @@ void *serv(void *arg)
         buffer[n] = '\0';
         if ( n >= 0 )
         {
-            printf("Received : %s id1\n", buffer);
+            printf("Received : %s \n", buffer);
         }
-        // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
-        // printf("Hello message sent.\n");
-        clock_gettime(CLOCK_REALTIME, &end);
 
-
+    clock_gettime(CLOCK_REALTIME, &end);
     RTD(start.tv_nsec, end.tv_nsec);
-
-
+    
+    close(sockfd);
     pthread_exit(NULL);
 }
 
@@ -63,23 +55,19 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip2, PORT1);
+    servaddr = s_ip_addr(ip2, PORT0);
 
     int n, len;
 
     sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     printf("cli -> serv\n");
 
-    //****Recebe do Server****//
-    // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
-    // buffer[n] = '\0';
-    // printf("Server : %s\n", buffer);
     clock_gettime(CLOCK_REALTIME, &end);
-    
-    close(sockfd);
-
     RTD(start.tv_nsec, end.tv_nsec);
+    
 
+
+    close(sockfd);
     pthread_exit(NULL);
 }
 
@@ -101,7 +89,7 @@ int main(int argc, char **argv)
     strcpy(filter, "wlan type mgt subtype beacon && ether host ");
     strcat(filter, mac_addr_ap);
 
-    bool debug = false;
+    
     //********************//s
     if (firstpass == 1)
     {
@@ -115,12 +103,9 @@ int main(int argc, char **argv)
         }
 
         /* print capture info */
-        if (debug == true)
-        {
-
             printf("Device: %s\n", device);
             printf("Filter expression: %s\n", filter);
-        }
+        
 
         //create handler
 
@@ -204,7 +189,7 @@ int main(int argc, char **argv)
 
         //if (state_id0 == 0 && pcap(handler,&packet_header)){
         if (state_id0 == 0){
-            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+            pthread_create(&pt_s, NULL, serv,NULL);
             //  clock_gettime(CLOCK_REALTIME, &recv);
             state_id0=1;
             usleep(66300);

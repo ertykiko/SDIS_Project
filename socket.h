@@ -16,7 +16,6 @@
 #include <pthread.h>
 #include <pcap.h>
 #include <time.h>
-#include <stdbool.h>
 
 #define mac_addr_ap "48:f8:db:f8:ae:20"  //Acess Point MAC adress 
 #define device "en1" // network device name
@@ -26,8 +25,8 @@
 #define PORT2 8082
 
 #define ip0 "127.0.0.1"
-#define ip1 "127.0.0.2"
-#define ip2 "127.0.0.3"
+#define ip1 "127.0.0.1"
+#define ip2 "127.0.0.1"
 
 typedef struct sockaddr_in sa;
 typedef int state;

@@ -7,12 +7,10 @@ void *serv(void *arg)
     char buffer[MAXLINE];
     char *frame = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
-    aux_server *aux = (aux_server *)arg;
+    
     int len, n;
     struct timespec start, end;
 
-    // if (aux->i == 0)
-    // {
         // Creating socket file descriptor
         clock_gettime(CLOCK_REALTIME, &start);
         sockfd = s_udp();
@@ -22,29 +20,27 @@ void *serv(void *arg)
         bzero(&cliaddr, sizeof(cliaddr));
 
         // Filling server information
-        servaddr = s_addr(PORT1);
+        servaddr = s_addr(PORT0);
 
         // Bind the socket with the server address
         s_bind(sockfd, servaddr);
-        printf("Aqui\n");
-        aux->i = 1;
-    // }
+        
+
 
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
         buffer[n] = '\0';
-        printf("Aqui\n");
+        
         if (n >= 0)
         {
             printf("Received : %s \n", buffer);
         }
-        // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
-        // printf("Hello message sent.\n")
-        clock_gettime(CLOCK_REALTIME, &end);
-
+    
+    clock_gettime(CLOCK_REALTIME, &end);
     RTD(start.tv_nsec, end.tv_nsec);
-
+    
+    close(sockfd);
     pthread_exit(NULL);
 }
 
@@ -52,7 +48,8 @@ void *cli(void *arg)
 {
     int sockfd;
     char buffer[MAXLINE];
-    char *frame = "Hello from client id1";
+    char *frame = "Message from client id0";
+
     struct sockaddr_in servaddr;
     struct timespec start, end;
 
@@ -71,16 +68,10 @@ void *cli(void *arg)
     sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     printf("cli -> serv\n");
 
-    //****Recebe do Server****//
-    // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
-    // buffer[n] = '\0';
-    // printf("Server : %s\n", buffer);
     clock_gettime(CLOCK_REALTIME, &end);
-
-    close(sockfd);
-
     RTD(start.tv_nsec, end.tv_nsec);
 
+    close(sockfd);
     pthread_exit(NULL);
 }
 
@@ -101,7 +92,7 @@ char *filter = malloc(sizeof(char) * 61);
 strcpy(filter, "wlan type mgt subtype beacon && ether host ");
 strcat(filter, mac_addr_ap);
 
-bool debug = false;
+
 //********************//s
 if (firstpass == 1)
 {
@@ -115,12 +106,8 @@ if (firstpass == 1)
     }
 
     /* print capture info */
-    if (debug == true)
-    {
-
         printf("Device: %s\n", device);
         printf("Filter expression: %s\n", filter);
-    }
 
     //create handler
 
@@ -182,8 +169,6 @@ if (firstpass == 1)
     state get_time = 0;
     int aux_beacon = 0;
     //-----clocks-----//
-    clock_t curr_clock, main_clock;
-    //Relogios do quinaz muito bonitos
     struct timespec send, recv, base_clock, wait;
 
     send.tv_nsec = 0;
@@ -192,11 +177,6 @@ if (firstpass == 1)
     //Threads
     pthread_t pt_s;
     pthread_t pt_c;
-    //bind server aux
-    aux_server aux_s;
-    aux_s.i = 0;
-    //send aux
-    int send_aux_1 = 0;
 
     while(1){
 
@@ -204,7 +184,7 @@ if (firstpass == 1)
 
         if (state_id0 == 0 && pcap(handler,&packet_header)){
        //  if (state_id0 == 0){
-           pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+           pthread_create(&pt_s, NULL, serv, NULL);
 //           clock_gettime(CLOCK_REALTIME, &recv);
            state_id0=1;
            usleep(50000);

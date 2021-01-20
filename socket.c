@@ -81,7 +81,7 @@ void s_bind(int s, sa addr)
     if (b < 0)
     {
         printf("\nbind failed\n");
-        return;
+        return ;
     }
 }
 
