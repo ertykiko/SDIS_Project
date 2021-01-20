@@ -41,9 +41,8 @@ typedef struct time_data{
 typedef struct aux_server{
   int i;
 }aux_server;
-
 int timer(int t);
-void RTD(clock_t t_send, clock_t t_recv);
+void RTD(long t_send, long t_recv);
 int s_udp();
 sa s_addr(int port);
 sa s_ip_addr(char *ip, int port);

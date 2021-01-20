@@ -137,6 +137,7 @@ int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
     {
         //printf("Sucess\n");
         //print_packet_info(packet,*packet_header);
+        printf("Packet comment : %s\n",packet_header->comment);
         return 1;
     }
     
@@ -145,7 +146,7 @@ int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
 {
     int len = 0;
-    printf("Packet %ld s , %d us \n", packet_header.ts.tv_sec, packet_header.ts.tv_usec);
+    //printf("Packet %ld s , %d us \n", packet_header.ts.tv_sec, packet_header.ts.tv_usec);
     printf("Packet capture length: %d\n", packet_header.caplen);
     printf("Packet total length %d\n", packet_header.len);
     while (len < packet_header.len)
@@ -157,30 +158,4 @@ void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
     printf("\n");
 }
 
-// void avg_beacon_time(long *loop_number, int *avg_beacon_ms, long cur_beacon_s, long cur_beacon_usec, long *last_beacon_s, long *last_beacon_us)
-// {
-//     long aux_s;
-//     long aux_us;
-//     if (last_beacon_s == 0 && last_beacon_us == 0)
-//     {
-//         loop_number++;
-//         last_beacon_s = cur_beacon_s;
-//         last_beacon_us = cur_beacon_usec;
-         
-        
-//     }
-//     else
-//     {
-//         loop_number++;
-//         aux_s = last_beacon_s - cur_beacon_s;
-//         aux_us = last_beacon_us - cur_beacon_usec;
-//         if (loop_number == 2)
-//         {
-//             avg_beacon_ms = aux_s + aux_us/1000;
-//         }
-//         if(loop_number)
-// {}
-//         //avg_beacon_ms = avg_beacon_ms + ()
-//     }
 
-// }

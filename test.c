@@ -1,5 +1,47 @@
 #include "socket.h"
+void avg_beacon_time(long *loop_number, int *avg_beacon_ms, long cur_beacon_s, long cur_beacon_us, long *last_beacon_s, long *last_beacon_us)
+{
+    FILE *fptr;
+    fptr = fopen("intervalos.csv", "a");
+    
+    
 
+    long aux_s;
+    long aux_us;
+    int auxi;
+
+        if (*loop_number == 0)
+    {
+        //printf("First Beacon received, cannot calculate interval \n");
+        fprintf(fptr, "Loop,Interval,Average\n");
+        fprintf(fptr, "0,0,0\n" );
+    }
+    else
+    {
+        //aux_s = (*last_beacon_s - cur_beacon_s);
+        aux_s = (cur_beacon_s - *last_beacon_s);
+        aux_us = (cur_beacon_us - *last_beacon_us);
+        //aux_us = (*last_beacon_us - cur_beacon_usec);
+        auxi = (int)(aux_s * 1000 + aux_us / 1000);
+        //printf("Beacon Interval %d \n :",auxi);
+        if (*loop_number == 2)
+        {
+            *avg_beacon_ms = auxi;
+            //printf("Average is the same as the interval \n");
+        }
+        if (*loop_number >= 3)
+        {
+            *avg_beacon_ms = *avg_beacon_ms + (auxi - *avg_beacon_ms) / (*loop_number);
+            //printf("Average is : %d \n",*avg_beacon_ms);
+        }
+    }
+
+    fprintf(fptr, "%ld,%d,%d\n",*loop_number,auxi,*avg_beacon_ms);
+
+    *last_beacon_s = cur_beacon_s;
+    *last_beacon_us = cur_beacon_us;
+    fclose(fptr);
+}
 void *serv(void *arg)
 {
 
@@ -19,7 +61,7 @@ void *serv(void *arg)
         bzero(&cliaddr, sizeof(cliaddr));
 
         // Filling server information
-        servaddr = s_addr(PORT);
+        servaddr = s_addr(PORT1);
 
         // Bind the socket with the server address
         s_bind(sockfd, servaddr);
@@ -57,7 +99,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip1, PORT);
+    servaddr = s_ip_addr(ip1, PORT1);
 
     int n, len;
 
@@ -80,13 +122,13 @@ int main()
     //*****Setting up connection to wireless card ***//
     //***PCAP_Variables***//
     pcap_t *handler;
-    struct pcap_pkthdr packet_header;
+    struct pcap_pkthdr packet_header; //  && wlan type mgt subtype beacon src net 192.168.1.2 &&  && src net 192.168.1.0/24
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
 
     char error_buff[PCAP_ERRBUF_SIZE];              //Can be freed afer first pass ?
-    char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
+    char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ? && src net 94.60.138.247
 
     bool debug = false;
     //********************//s
@@ -179,13 +221,22 @@ int main()
     aux_server aux_s;
     aux_s.i = 0;
 
-    int uno = 1;
+    int uno = 0;
     firstpass = 0;
+
+    long loopnumber=0;
+    int avg_beacon_ms=0;
+    long last_beacon_us=0,last_beacon_s=0 ;
+
+    
     while (1)
     {
-        main=clock();
-        pcap(handler,&packet_header);
-       
+        main_clock=clock();
+        if(pcap(handler,&packet_header)){
+
+        avg_beacon_time(&loopnumber,&avg_beacon_ms,packet_header.ts.tv_sec,packet_header.ts.tv_usec,&last_beacon_s,&last_beacon_us);
+        loopnumber++;
+        }
 }
 }
 
