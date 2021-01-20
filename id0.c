@@ -199,8 +199,8 @@ int main(int argc, char **argv)
 
   //      clock_gettime(CLOCK_REALTIME, &base_clock);
 
-       if (state_id0 == 0 && pcap(handler,&packet_header)){
- //      if (state_id0 == 0){
+        if (state_id0 == 0 && pcap(handler,&packet_header)){
+       //  if (state_id0 == 0){
            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
 //           clock_gettime(CLOCK_REALTIME, &recv);
            state_id0=1;

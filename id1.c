@@ -8,10 +8,12 @@ void *serv(void *arg)
     struct sockaddr_in servaddr, cliaddr;
     aux_server *aux = (aux_server *)arg;
     int len, n;
+    struct timespec start, end;
 
-    if ( aux->i == 0 ) 
-    {
+    // if ( aux->i == 0 )
+    // {
         // Creating socket file descriptor
+        clock_gettime(CLOCK_REALTIME, &start);
         sockfd = s_udp();
         s_reuse(sockfd); 
         //erases the data in the bytes of the memory
@@ -24,10 +26,8 @@ void *serv(void *arg)
         // Bind the socket with the server address
         s_bind(sockfd, servaddr);
         aux->i = 1;
-    }
+    //}
     
-    while (1)
-    {
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
@@ -38,7 +38,11 @@ void *serv(void *arg)
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
-    }
+        clock_gettime(CLOCK_REALTIME, &end);
+
+
+    RTD(start.tv_nsec, end.tv_nsec);
+
 
     pthread_exit(NULL);
 }
@@ -49,8 +53,10 @@ void *cli(void *arg)
     char buffer[MAXLINE];
     char *frame = "Hello from client id1";
     struct sockaddr_in servaddr;
+    struct timespec start, end;
 
     // Creating socket file descriptor
+    clock_gettime(CLOCK_REALTIME, &start);
     sockfd = s_udp();
     // s_reuse(sockfd);
     //erases the data in the bytes of the memory
@@ -68,8 +74,11 @@ void *cli(void *arg)
     // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
     // buffer[n] = '\0';
     // printf("Server : %s\n", buffer);
+    clock_gettime(CLOCK_REALTIME, &end);
     
     close(sockfd);
+
+    RTD(start.tv_nsec, end.tv_nsec);
 
     pthread_exit(NULL);
 }
@@ -190,10 +199,10 @@ int main(int argc, char **argv)
 
         //      clock_gettime(CLOCK_REALTIME, &base_clock);
 
-        if (state_id0 == 0 && pcap(handler,&packet_header)){
-            //      if (state_id0 == 0){
+        //if (state_id0 == 0 && pcap(handler,&packet_header)){
+        if (state_id0 == 0){
             pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
-//           clock_gettime(CLOCK_REALTIME, &recv);
+            //  clock_gettime(CLOCK_REALTIME, &recv);
             state_id0=1;
             usleep(66300);
         }
@@ -201,7 +210,7 @@ int main(int argc, char **argv)
         else if(state_id0 == 1){
             //start server
             pthread_create(&pt_c, NULL, cli, NULL);
-//           clock_gettime(CLOCK_REALTIME, &send);
+         //  clock_gettime(CLOCK_REALTIME, &send);
             state_id0=2;
             pthread_join(pt_s, NULL);
             pthread_join(pt_c, NULL);
