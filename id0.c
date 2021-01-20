@@ -214,7 +214,7 @@ int main(int argc, char **argv)
            state_id0=2;
            pthread_join(pt_s, NULL);
            pthread_join(pt_c, NULL);
-           usleep(16000);
+           usleep(16300);
        }
 
        else if (state_id0 == 2)

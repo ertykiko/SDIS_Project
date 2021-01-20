@@ -280,5 +280,61 @@ int main(int argc, char **argv)
         {
             exit(EXIT_FAILURE);
         }
+
+    //*************///
+    //states
+    state state_id0 = 0; //Waiting for beacon to sync
+    state get_time = 0;
+    int aux_beacon = 0;
+    //-----clocks-----//
+    clock_t curr_clock, main_clock;
+    //Relogios do quinaz muito bonitos
+    struct timespec send, recv, base_clock, wait;
+
+    send.tv_nsec = 0;
+    send.tv_sec = 0;
+
+    //Threads
+    pthread_t pt_s;
+    pthread_t pt_c;
+    //bind server aux
+    aux_server aux_s;
+    aux_s.i = 0;
+    //send aux
+    int send_aux_1 = 0;
+
+    while(1){
+
+        //      clock_gettime(CLOCK_REALTIME, &base_clock);
+
+        if (state_id0 == 0 && pcap(handler,&packet_header)){
+            //      if (state_id0 == 0){
+            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+//           clock_gettime(CLOCK_REALTIME, &recv);
+            state_id0=1;
+            usleep(82600);
+        }
+
+        else if(state_id0 == 1){
+            //start server
+            pthread_create(&pt_c, NULL, cli, NULL);
+//           clock_gettime(CLOCK_REALTIME, &send);
+            state_id0=2;
+            pthread_join(pt_s, NULL);
+            pthread_join(pt_c, NULL);
+            usleep(16300);
+        }
+
+        else if (state_id0 == 2)
+        {
+            //          clock_gettime(CLOCK_REALTIME, &wait);
+            // RTD(recv.tv_nsec ,send.tv_nsec);
+            // RTD(send.tv_nsec, wait.tv_nsec);
+            state_id0=0;
+
+        }
+
     }
+    }
+
 }

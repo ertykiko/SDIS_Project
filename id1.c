@@ -38,7 +38,7 @@ void *serv(void *arg)
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
-     }
+    }
 
     pthread_exit(NULL);
 }
@@ -163,6 +163,7 @@ int main(int argc, char **argv)
         }
     }
 
+
     //*************///
     //states
     state state_id0 = 0; //Waiting for beacon to sync
@@ -171,7 +172,10 @@ int main(int argc, char **argv)
     //-----clocks-----//
     clock_t curr_clock, main_clock;
     //Relogios do quinaz muito bonitos
-    clock_t send = 0,recv = 0;
+    struct timespec send, recv, base_clock, wait;
+
+    send.tv_nsec = 0;
+    send.tv_sec = 0;
 
     //Threads
     pthread_t pt_s;
@@ -180,95 +184,39 @@ int main(int argc, char **argv)
     aux_server aux_s;
     aux_s.i = 0;
     //send aux
-    int send_aux = 0;
+    int send_aux_1 = 0;
 
-    int uno=1;
-    firstpass =0;
-    while (1)
-    {
-        main_clock = clock();
+    while(1){
 
-        if (get_time == 1)
-        {
-            curr_clock = clock();
-            main_clock = clock();
-            get_time = 0;
+        //      clock_gettime(CLOCK_REALTIME, &base_clock);
+
+        if (state_id0 == 0 && pcap(handler,&packet_header)){
+            //      if (state_id0 == 0){
+            pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
+//           clock_gettime(CLOCK_REALTIME, &recv);
+            state_id0=1;
+            usleep(66300);
         }
-        else if (state_id0 == 0 && aux_beacon == 0 && get_time == 0)
-        {
-            printf("----ID1----\n");
-            printf("id1 - Waiting for beacon\n %d Loop \n",firstpass);
-            aux_beacon = pcap(handler, &packet_header); 
-           
 
-            get_time = 1;
-            state_id0 = 1;
-            
-            /*start downlink*/
-            
-            pthread_create(&pt_s, NULL, serv, (void*)&aux_s);
-
-            if (recv == 0)
-            {
-                recv = clock();
-            }
-            else
-            {
-                recv = clock();
-                
-                RTD(send, recv);
-            }
-        }
-        else if (state_id0 == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //finish downlink
-        {
-            aux_beacon = 0;
-            printf("id1 - State 1\n--Id0 it's trasmiting--\n");
+        else if(state_id0 == 1){
+            //start server
+            pthread_create(&pt_c, NULL, cli, NULL);
+//           clock_gettime(CLOCK_REALTIME, &send);
+            state_id0=2;
+            pthread_join(pt_s, NULL);
+            pthread_join(pt_c, NULL);
             usleep(16300);
-            state_id0 = 2;
         }
-        else if (state_id0 == 2) //id1 is tramsiting
+
+        else if (state_id0 == 2)
         {
-            printf("id1 - State 2\n--Id1 it's trasmiting--\n");
-            get_time = 1;
-            printf("send_aux:%d\n",send_aux);
-            if ( send_aux == 1 )
-            {
-                pthread_create(&pt_c, NULL, cli, NULL);
-                send = clock();
-                send_aux++;
-            }
-            else if ( send_aux == 2 )
-            {
-                send_aux = 0;
-            }
-            else if ( send_aux == 0 )
-            {
-                send_aux = 1;
-            } 
-            state_id0 = 3;
-        }
-        else if (state_id0 == 3 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) //id1 finished transmitting
-        {
-            if ( send_aux == 2 )
-            {
-                pthread_join(pt_c, NULL);
-            }
-            //Here we at 82 id2->transmit
-            printf("id1 - State 3 \n");
-            state_id0 = 4;
+            //          clock_gettime(CLOCK_REALTIME, &wait);
+            // RTD(recv.tv_nsec ,send.tv_nsec);
+            // RTD(send.tv_nsec, wait.tv_nsec);
+            state_id0=0;
 
         }
-        else if (state_id0 == 4) //id2 is tramsiting
-        {
-            printf("id1 - State 4\n--Id2 it's trasmiting--\n");
-            usleep(16300); // can be replaced for clock ---
-            state_id0 = 0; //Finished transmiting and waiting for beacon to sync
-            firstpass ++ ;
-            //Start over
-        }
-        else if (firstpass == max_loops)
-        {
-            exit(EXIT_FAILURE);
-        }
+
     }
+
 }
