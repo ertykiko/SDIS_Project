@@ -22,14 +22,14 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define device "en1"
+#define device "en0"
 #define MAXLINE 1024
 #define PORT0 8080
 #define PORT1 8081
 #define PORT2 8082
 
 #define ip0 "127.0.0.1"
-#define ip1 "127.0.0.1"
+#define ip1 "10.10.10.154"
 #define ip2 "127.0.0.1"
 
 typedef struct sockaddr_in sa;

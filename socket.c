@@ -112,7 +112,7 @@ void s_multicast(int s, m_req mreq)
 }
 void my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
-    /* Do something with the packet here. 
+    /* Do something with the packet here.
        The print_packet_info() function shows in the
        previous example could be used here. */
 
@@ -122,7 +122,6 @@ void my_packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_c
 int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
 {
     const u_char *packet = pcap_next(handler, packet_header);
-    
     if (packet == NULL)
     {
         printf("Error reading Packet \n");
@@ -134,7 +133,7 @@ int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header)
         //print_packet_info(packet,*packet_header);
         return 1;
     }
-    
+
 }
 
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
@@ -161,8 +160,8 @@ void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header)
 //         loop_number++;
 //         last_beacon_s = cur_beacon_s;
 //         last_beacon_us = cur_beacon_usec;
-         
-        
+
+
 //     }
 //     else
 //     {

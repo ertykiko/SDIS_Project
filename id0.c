@@ -2,7 +2,7 @@
 
 void *serv(void *arg)
 {
-    
+
     int sockfd;
     char buffer[MAXLINE];
     char *frame = "Hello from server";
@@ -10,7 +10,7 @@ void *serv(void *arg)
     aux_server *aux = (aux_server *)arg;
     int len, n;
 
-    if ( aux->i == 0 ) 
+    if ( aux->i == 0 )
     {
         // Creating socket file descriptor
         sockfd = s_udp();
@@ -25,9 +25,9 @@ void *serv(void *arg)
         s_bind(sockfd, servaddr);
         aux->i = 1;
     }
-    
-     while (1)
-     {
+
+    while (1)
+    {
         len = sizeof(cliaddr); //len is value/resuslt
 
         n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
@@ -38,7 +38,7 @@ void *serv(void *arg)
         }
         // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
         // printf("Hello message sent.\n");
-     }
+    }
 
     pthread_exit(NULL);
 }
@@ -57,7 +57,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip1, PORT0);
+    servaddr = s_ip_addr(ip1, PORT1);
 
     int n, len;
 
@@ -68,7 +68,7 @@ void *cli(void *arg)
     // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
     // buffer[n] = '\0';
     // printf("Server : %s\n", buffer);
-    
+
     close(sockfd);
 
     pthread_exit(NULL);
@@ -88,13 +88,13 @@ int main(int argc, char **argv)
 
     char error_buff[PCAP_ERRBUF_SIZE]; //Can be freed afer first pass ?
     char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
-    
+
     bool debug = false;
     //********************//s
     if (firstpass == 1)
     {
 
-        
+
 
         /* Get IP and Subnet-mask associated with capture device */
         if (pcap_lookupnet(device, &ip, &mask, error_buff) == -1)
@@ -183,7 +183,7 @@ int main(int argc, char **argv)
     aux_s.i = 0;
     //send aux
     int send_aux_0 = 0;
-    
+
     int uno=1;
     firstpass =0;
     while (1)
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
             printf("----ID0----\n");
             printf("id0 - Waiting for beacon\n %d Loop \n", firstpass);
 
-            aux_beacon = pcap(handler, &packet_header); //Atraso maior que 50ms ! Porblema com o get time -  solution if 
+            // aux_beacon = pcap(handler, &packet_header); //Atraso maior que 50ms ! Porblema com o get time -  solution if
             aux_beacon = 1;
             get_time = 1;
             st = 1;
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
             else
             {
                 recv = clock();
-                
+
                 RTD(send, recv);
             }
         }
@@ -225,13 +225,13 @@ int main(int argc, char **argv)
         else if (st == 1 && aux_beacon == 1 && get_time == 0 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 50.0)) //Downlink over
         {
             //50ms
-            printf("id0 - State 1 -Downlink is over, ID0 will start trasmitting \n");
             st = 2;
             aux_beacon = 0;
             get_time = 1;
             printf("id0 - send_aux_0:%d\n", send_aux_0);
             if ( send_aux_0 == 0 )
             {
+                printf("id0 - State 1 -Downlink is over, ID0 will start trasmitting \n");
                 pthread_create(&pt_c, NULL, cli, NULL);
                 send = clock();
                 send_aux_0++;
@@ -243,21 +243,22 @@ int main(int argc, char **argv)
             else if ( send_aux_0 == 2 )
             {
                 send_aux_0 = 0;
-            }  
+            }
         }
         //ID0 is transmitting
-        else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3)) 
+        else if (st == 2 && ((float)(((main_clock - curr_clock) / 1000000.0F) * 1000) >= 16.3))
         {
             //66,3 ms, ID0 haas ended -> Close thread
             if ( send_aux_0 == 1 )
             {
                 pthread_join(pt_c, NULL);
             }
+
             printf("id0 - State 2 - ID0 has ended it's tramission, ID1 will start transmitting\n");
-            st = 3; 
+            st = 3;
         }
         //ID1 is transmitting
-        else if (st == 3) 
+        else if (st == 3)
         {
 
             printf("id0 - State 3 - ID1 has ended it's tramission, ID2 will start transmitting\n");

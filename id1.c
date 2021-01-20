@@ -57,7 +57,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip2, PORT1);
+    servaddr = s_ip_addr(ip2, PORT2);
 
     int n, len;
 
