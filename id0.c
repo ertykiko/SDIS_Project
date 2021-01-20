@@ -205,7 +205,6 @@ int main(int argc, char **argv)
             // RTD(recv.tv_nsec ,send.tv_nsec);
             // RTD(send.tv_nsec, wait.tv_nsec);
             state_id0=0;
-            usleep(32600);
        }
     }
 }
