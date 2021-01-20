@@ -9,28 +9,28 @@ void *serv(void *arg)
     int len, n;
     struct timespec start, end;
 
-        // Creating socket file descriptor
-        clock_gettime(CLOCK_REALTIME, &start);
-        sockfd = s_udp();
-        s_reuse(sockfd); 
-        //erases the data in the bytes of the memory
-        bzero(&servaddr, sizeof(servaddr));
-        bzero(&cliaddr, sizeof(cliaddr));
+    // Creating socket file descriptor
+    clock_gettime(CLOCK_REALTIME, &start);
+    sockfd = s_udp();
+    s_reuse(sockfd); 
+    //erases the data in the bytes of the memory
+    bzero(&servaddr, sizeof(servaddr));
+    bzero(&cliaddr, sizeof(cliaddr));
 
-        // Filling server information
-        servaddr = s_addr(PORT1);
+    // Filling server information
+    servaddr = s_addr(PORT1);
 
-        // Bind the socket with the server address
-        s_bind(sockfd, servaddr);
+    // Bind the socket with the server address
+    s_bind(sockfd, servaddr);
     
-        len = sizeof(cliaddr); //len is value/resuslt
+    len = sizeof(cliaddr); //len is value/resuslt
 
-        n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
-        buffer[n] = '\0';
-        if ( n >= 0 )
-        {
-            printf("Received : %s \n", buffer);
-        }
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
+    buffer[n] = '\0';
+    if ( n >= 0 )
+    {
+        printf("Received : %s \n", buffer);
+    }
 
     clock_gettime(CLOCK_REALTIME, &end);
     RTD(start.tv_nsec, end.tv_nsec);
@@ -65,8 +65,6 @@ void *cli(void *arg)
     clock_gettime(CLOCK_REALTIME, &end);
     RTD(start.tv_nsec, end.tv_nsec);
     
-
-
     close(sockfd);
     pthread_exit(NULL);
 }
@@ -103,19 +101,18 @@ int main(int argc, char **argv)
         }
 
         /* print capture info */
-            printf("Device: %s\n", device);
-            printf("Filter expression: %s\n", filter);
+        printf("Device: %s\n", device);
+        printf("Filter expression: %s\n", filter);
         
 
         //create handler
-
         handler = pcap_create(device, error_buff);
         if (handler == NULL)
         {
             printf("Error create\n");
         }
-        // Set device to monitor mode
 
+        // Set device to monitor mode
         if (pcap_set_rfmon(handler, 1) != 0)
         {
             printf("Error while setting %s to monitor mode \n", device);
@@ -183,10 +180,9 @@ int main(int argc, char **argv)
     //send aux
     int send_aux_1 = 0;
 
-    while(1){
-
-        //      clock_gettime(CLOCK_REALTIME, &base_clock);
-
+    while(1)
+    {
+        //clock_gettime(CLOCK_REALTIME, &base_clock);
         //if (state_id0 == 0 && pcap(handler,&packet_header)){
         if (state_id0 == 0){
             pthread_create(&pt_s, NULL, serv,NULL);
@@ -194,7 +190,6 @@ int main(int argc, char **argv)
             state_id0=1;
             usleep(66300);
         }
-
         else if(state_id0 == 1){
             //start server
             pthread_create(&pt_c, NULL, cli, NULL);
@@ -204,7 +199,6 @@ int main(int argc, char **argv)
             pthread_join(pt_c, NULL);
             usleep(16300);
         }
-
         else if (state_id0 == 2)
         {
             //          clock_gettime(CLOCK_REALTIME, &wait);
@@ -213,7 +207,5 @@ int main(int argc, char **argv)
             state_id0=0;
 
         }
-
     }
-
 }

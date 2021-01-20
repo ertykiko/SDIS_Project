@@ -11,36 +11,31 @@ void *serv(void *arg)
     int len, n;
     struct timespec start, end;
 
- //   if (aux->i == 0)
-   // {
-        // Creating socket file descriptor
-        clock_gettime(CLOCK_REALTIME, &start);
-        sockfd = s_udp();
-        s_reuse(sockfd);
-        //erases the data in the bytes of the memory
-        bzero(&servaddr, sizeof(servaddr));
-        bzero(&cliaddr, sizeof(cliaddr));
+    // Creating socket file descriptor
+    clock_gettime(CLOCK_REALTIME, &start);
+    sockfd = s_udp();
+    s_reuse(sockfd);
+    //erases the data in the bytes of the memory
+    bzero(&servaddr, sizeof(servaddr));
+    bzero(&cliaddr, sizeof(cliaddr));
 
-        // Filling server information
-        servaddr = s_addr(PORT2);
+    // Filling server information
+    servaddr = s_addr(PORT2);
 
-        // Bind the socket with the server address
-        s_bind(sockfd, servaddr);
-        aux->i = 1;
-  //  }
+    // Bind the socket with the server address
+    s_bind(sockfd, servaddr);
+    aux->i = 1;
 
-        len = sizeof(cliaddr); //len is value/resuslt
+    len = sizeof(cliaddr); //len is value/resuslt
 
-        n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
-        buffer[n] = '\0';
-        if (n >= 0)
-        {
-            printf("Received : %s id2\n", buffer);
-        }
-        // sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&cliaddr, len);
-        // printf("Hello message sent.\n");
-        clock_gettime(CLOCK_REALTIME, &end);
-
+    n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, (socklen_t *)&len);
+    buffer[n] = '\0';
+    if (n >= 0)
+    {
+        printf("Received : %s id2\n", buffer);
+    }
+        
+    clock_gettime(CLOCK_REALTIME, &end);
 
     RTD(start.tv_nsec, end.tv_nsec);
 
@@ -70,14 +65,8 @@ void *cli(void *arg)
     sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     printf("cli -> serv\n");
 
-    //****Recebe do Server****//
-    // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&servaddr, (socklen_t *)&len);
-    // buffer[n] = '\0';
-    // printf("Server : %s\n", buffer);
-
     close(sockfd);
     clock_gettime(CLOCK_REALTIME, &end);
-
 
     RTD(start.tv_nsec, end.tv_nsec);
 
@@ -99,8 +88,7 @@ int main(int argc, char **argv)
     char error_buff[PCAP_ERRBUF_SIZE];              //Can be freed afer first pass ?
     char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
 
-    bool debug = false;
-    //********************//s
+    //********************//
     if (firstpass == 1)
     {
 
@@ -112,23 +100,18 @@ int main(int argc, char **argv)
             mask = 0;
         }
 
-        /* print capture info */
-        if (debug == true)
-        {
-
-            printf("Device: %s\n", device);
-            printf("Filter expression: %s\n", filter);
-        }
+        
+        printf("Device: %s\n", device);
+        printf("Filter expression: %s\n", filter);
 
         //create handler
-
         handler = pcap_create(device, error_buff);
         if (handler == NULL)
         {
             printf("Error create\n");
         }
-        // Set device to monitor mode
 
+        // Set device to monitor mode
         if (pcap_set_rfmon(handler, 1) != 0)
         {
             printf("Error while setting %s to monitor mode \n", device);
@@ -156,7 +139,6 @@ int main(int argc, char **argv)
             {
                 fprintf(stderr, "%s is not a wlan packet !\n", device);
             }
-
             exit(EXIT_FAILURE);
         }
         /* compile the filter expression */
@@ -197,36 +179,33 @@ int main(int argc, char **argv)
     //send aux
     int send_aux_1 = 0;
 
-    while(1){
-
-        //      clock_gettime(CLOCK_REALTIME, &base_clock);
-
+    while(1)
+    {
+        //clock_gettime(CLOCK_REALTIME, &base_clock);
        // if (state_id0 == 0 && pcap(handler,&packet_header)){
-        if (state_id0 == 0){
+        if (state_id0 == 0)
+        {
             pthread_create(&pt_s, NULL, serv, (void *)&aux_s);
-//           clock_gettime(CLOCK_REALTIME, &recv);
+            //clock_gettime(CLOCK_REALTIME, &recv);
             state_id0=1;
             usleep(82600);
         }
-
         else if(state_id0 == 1){
             //start server
             pthread_create(&pt_c, NULL, cli, NULL);
-//           clock_gettime(CLOCK_REALTIME, &send);
+            //clock_gettime(CLOCK_REALTIME, &send);
             state_id0=2;
             pthread_join(pt_s, NULL);
             pthread_join(pt_c, NULL);
             usleep(16300);
         }
-
         else if (state_id0 == 2)
         {
-            //          clock_gettime(CLOCK_REALTIME, &wait);
+            //clock_gettime(CLOCK_REALTIME, &wait);
             // RTD(recv.tv_nsec ,send.tv_nsec);
             // RTD(send.tv_nsec, wait.tv_nsec);
             state_id0=0;
 
         }
-
     }
 }
