@@ -135,7 +135,7 @@ int main()
     strcpy(filter,"wlan type mgt subtype beacon && ether host ");
     strcat(filter,mac_addr_ap);
 
-    bool debug = false;
+    
     //********************//s
     if (firstpass == 1)
     {
@@ -149,12 +149,12 @@ int main()
         }
 
         /* print capture info */
-        if (debug == true)
-        {
+        // if (debug == true)
+        // {
 
-            printf("Device: %s\n", device);
-            printf("Filter expression: %s\n", filter);
-        }
+        //     printf("Device: %s\n", device);
+        //     printf("Filter expression: %s\n", filter);
+        // }
 
         //create handler
 

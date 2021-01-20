@@ -15,7 +15,7 @@
 #include <time.h>
 
 #define mac_addr_ap "48:f8:db:f8:ae:20"  //Acess Point MAC adress 
-#define device "en0" // network device name
+#define device "en1" // network device name
 #define MAXLINE 1024
 #define PORT0 8080
 #define PORT1 8081

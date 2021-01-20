@@ -29,20 +29,20 @@ void *serv(void *arg)
     buffer[n] = '\0';
     if (n >= 0)
     {
-        printf("Received : %s id2\n", buffer);
+        printf("Received : %s \n", buffer);
     }
         
     clock_gettime(CLOCK_REALTIME, &end);
-
     RTD(start.tv_nsec, end.tv_nsec);
 
+    close(sockfd);
     pthread_exit(NULL);
 }
 
 void *cli(void *arg)
 {
     int sockfd;
-    char *frame = "Hello from client id2";
+    char *frame = "Ahoy from client id2";
     struct sockaddr_in servaddr;
     struct timespec start, end;
 
@@ -61,11 +61,11 @@ void *cli(void *arg)
     sendto(sockfd, (const char *)frame, strlen(frame), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     printf("cli -> serv\n");
 
-    close(sockfd);
+    
     clock_gettime(CLOCK_REALTIME, &end);
-
     RTD(start.tv_nsec, end.tv_nsec);
 
+    close(sockfd);
     pthread_exit(NULL);
 }
 
