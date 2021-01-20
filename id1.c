@@ -4,7 +4,6 @@ void *serv(void *arg)
 { 
     int sockfd;
     char buffer[MAXLINE];
-    char *frame = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
     int len, n;
     struct timespec start, end;
@@ -42,7 +41,6 @@ void *serv(void *arg)
 void *cli(void *arg)
 {
     int sockfd;
-    char buffer[MAXLINE];
     char *frame = "Hello from client id1";
     struct sockaddr_in servaddr;
     struct timespec start, end;
@@ -55,7 +53,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip2, PORT0);
+    servaddr = s_ip_addr(ip2, PORT2);
 
     int n, len;
 
@@ -160,7 +158,7 @@ int main(int argc, char **argv)
 
     //*************///
     //states
-    state state_id0 = 0; //Waiting for beacon to sync
+    state state_id1 = 0; //Waiting for beacon to sync
     state get_time = 0;
     int aux_beacon = 0;
     //-----clocks-----//
@@ -183,29 +181,29 @@ int main(int argc, char **argv)
     while(1)
     {
         //clock_gettime(CLOCK_REALTIME, &base_clock);
-        //if (state_id0 == 0 && pcap(handler,&packet_header)){
-        if (state_id0 == 0){
+        //if (state_id1 == 0 && pcap(handler,&packet_header)){
+        if (state_id1 == 0){
             pthread_create(&pt_s, NULL, serv,NULL);
-            //  clock_gettime(CLOCK_REALTIME, &recv);
-            state_id0=1;
+            //clock_gettime(CLOCK_REALTIME, &recv);
+            state_id1=1;
             usleep(66300);
         }
-        else if(state_id0 == 1){
+        else if(state_id1 == 1){
             //start server
             pthread_create(&pt_c, NULL, cli, NULL);
-         //  clock_gettime(CLOCK_REALTIME, &send);
-            state_id0=2;
+            //clock_gettime(CLOCK_REALTIME, &send);
+            state_id1=2;
             pthread_join(pt_s, NULL);
             pthread_join(pt_c, NULL);
             usleep(16300);
         }
-        else if (state_id0 == 2)
+        else if (state_id1 == 2)
         {
-            //          clock_gettime(CLOCK_REALTIME, &wait);
+            //clock_gettime(CLOCK_REALTIME, &wait);
             // RTD(recv.tv_nsec ,send.tv_nsec);
             // RTD(send.tv_nsec, wait.tv_nsec);
-            state_id0=0;
-
+            state_id1=0;
+            usleep(16300);
         }
     }
 }

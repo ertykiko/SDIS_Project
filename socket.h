@@ -1,9 +1,6 @@
 #ifndef socket_h
 #define socket_h
 
-
-
-
 #include <stdio.h>
 #include <assert.h>
 #include <netinet/in.h>
@@ -38,6 +35,7 @@ typedef struct time_data{
 typedef struct aux_server{
   int i;
 }aux_server;
+
 int timer(int t);
 void RTD(long t_send, long t_recv);
 int s_udp();
@@ -48,8 +46,6 @@ void s_reuse(int s);
 void s_inet(int s, char *ip, m_req mreq);
 void s_multicast(int s, m_req mreq);
 int pcap(pcap_t *handler, struct pcap_pkthdr *packet_header);
-
-
 void print_packet_info(const u_char *packet, struct pcap_pkthdr packet_header);
 
 #endif /* socket_h */

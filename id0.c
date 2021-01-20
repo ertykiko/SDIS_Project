@@ -5,7 +5,6 @@ void *serv(void *arg)
 {
     int sockfd;
     char buffer[MAXLINE];
-    char *frame = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
     
     int len, n;
@@ -47,7 +46,6 @@ void *serv(void *arg)
 void *cli(void *arg)
 {
     int sockfd;
-    char buffer[MAXLINE];
     char *frame = "Message from client id0";
 
     struct sockaddr_in servaddr;
@@ -61,7 +59,7 @@ void *cli(void *arg)
     bzero(&servaddr, sizeof(servaddr));
 
     // Filling server information
-    servaddr = s_ip_addr(ip2, PORT1);
+    servaddr = s_ip_addr(ip1, PORT1);
 
     int n, len;
 
@@ -207,6 +205,7 @@ int main(int argc, char **argv)
             // RTD(recv.tv_nsec ,send.tv_nsec);
             // RTD(send.tv_nsec, wait.tv_nsec);
             state_id0=0;
+            usleep(32600);
        }
     }
 }
