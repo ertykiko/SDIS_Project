@@ -5,14 +5,11 @@
 
 
 #include <stdio.h>
-#include <stdint.h>
 #include <assert.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <ctype.h>
 #include <unistd.h>
-//#include <inttypes.h>
 #include <string.h> 
 #include <arpa/inet.h>	//inet_addr
 #include <stdlib.h>
@@ -21,15 +18,16 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define device "wlp3s0"
+#define mac_addr_ap "48:f8:db:f8:ae:20"  //Acess Point MAC adress 
+#define device "en1" // network device name
 #define MAXLINE 1024
 #define PORT0 8080
 #define PORT1 8081
 #define PORT2 8082
 
 #define ip0 "127.0.0.1"
-#define ip1 "127.0.0.1"
-#define ip2 "127.0.0.1"
+#define ip1 "127.0.0.2"
+#define ip2 "127.0.0.3"
 
 typedef struct sockaddr_in sa;
 typedef int state;

@@ -34,9 +34,10 @@ void avg_beacon_time(long *loop_number, int *avg_beacon_ms, long cur_beacon_s, l
             *avg_beacon_ms = *avg_beacon_ms + (auxi - *avg_beacon_ms) / (*loop_number);
             //printf("Average is : %d \n",*avg_beacon_ms);
         }
+        fprintf(fptr, "%ld,%d,%d\n", *loop_number, auxi, *avg_beacon_ms);
     }
 
-    fprintf(fptr, "%ld,%d,%d\n",*loop_number,auxi,*avg_beacon_ms);
+    
 
     *last_beacon_s = cur_beacon_s;
     *last_beacon_us = cur_beacon_us;
@@ -128,7 +129,11 @@ int main()
     struct bpf_program fp;
 
     char error_buff[PCAP_ERRBUF_SIZE];              //Can be freed afer first pass ?
-    char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ? && src net 94.60.138.247
+    //char filter[] = "wlan type mgt subtype beacon && ether host 48:f8:db:f8:ae:20"; //Can be freed after ? && src net 94.60.138.247
+    //strcat(filter,mac_addr_ap);
+    char *filter = malloc(sizeof(char)*61);
+    strcpy(filter,"wlan type mgt subtype beacon && ether host ");
+    strcat(filter,mac_addr_ap);
 
     bool debug = false;
     //********************//s

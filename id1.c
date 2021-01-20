@@ -86,23 +86,27 @@ void *cli(void *arg)
 int main(int argc, char **argv)
 {
     int firstpass = 1;
-    int max_loops = 5;
     //*****Setting up connection to wireless card ***//
     //***PCAP_Variables***//
     pcap_t *handler;
-    struct pcap_pkthdr packet_header;
+    struct pcap_pkthdr packet_header; //  && wlan type mgt subtype beacon src net 192.168.1.2 &&  && src net 192.168.1.0/24
     bpf_u_int32 mask;
     bpf_u_int32 ip;
     struct bpf_program fp;
 
     char error_buff[PCAP_ERRBUF_SIZE]; //Can be freed afer first pass ?
-    char filter[] = "wlan type mgt subtype beacon"; //Can be freed after ?
-    
+    //char filter[] = "wlan type mgt subtype beacon && ether host 48:f8:db:f8:ae:20"; //Can be freed after ? && src net 94.60.138.247
+    //strcat(filter,mac_addr_ap);
+    char *filter = malloc(sizeof(char) * 61);
+    strcpy(filter, "wlan type mgt subtype beacon && ether host ");
+    strcat(filter, mac_addr_ap);
+
     bool debug = false;
-    //********************//
+    //********************//s
     if (firstpass == 1)
     {
-        //Get IP and Subnet-mask associated with capture device 
+
+        /* Get IP and Subnet-mask associated with capture device */
         if (pcap_lookupnet(device, &ip, &mask, error_buff) == -1)
         {
             fprintf(stderr, "Couldn't get netmask for device %s: %s\n", device, error_buff);
@@ -110,7 +114,7 @@ int main(int argc, char **argv)
             mask = 0;
         }
 
-        //print capture info
+        /* print capture info */
         if (debug == true)
         {
 
@@ -119,13 +123,14 @@ int main(int argc, char **argv)
         }
 
         //create handler
+
         handler = pcap_create(device, error_buff);
         if (handler == NULL)
         {
             printf("Error create\n");
         }
-
         // Set device to monitor mode
+
         if (pcap_set_rfmon(handler, 1) != 0)
         {
             printf("Error while setting %s to monitor mode \n", device);
@@ -156,22 +161,20 @@ int main(int argc, char **argv)
 
             exit(EXIT_FAILURE);
         }
-
-        //compile the filter expression 
+        /* compile the filter expression */
         if (pcap_compile(handler, &fp, filter, 1, PCAP_NETMASK_UNKNOWN) == -1)
         {
             fprintf(stderr, "Couldn't parse filter %s: %s\n", filter, pcap_geterr(handler));
             exit(EXIT_FAILURE);
         }
 
-        //apply the compiled filter
+        /* apply the compiled filter */
         if (pcap_setfilter(handler, &fp) == -1)
         {
             fprintf(stderr, "Couldn't install filter %s: %s\n", filter, pcap_geterr(handler));
             exit(EXIT_FAILURE);
         }
     }
-
 
     //*************///
     //states
